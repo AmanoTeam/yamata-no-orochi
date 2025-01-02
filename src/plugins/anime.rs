@@ -19,7 +19,9 @@ use crate::{
 
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
-    router.handler(handler::new_message(filter::command("anime")).then(anime))
+    router
+        .handler(handler::new_message(filter::command("anime")).then(anime))
+        .handler(handler::callback_query(filter::regex(r"^anime (\d+)")).then(anime))
 }
 
 /// The anime command handler.
@@ -27,7 +29,12 @@ async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
     let t = |key: &str| i18n.translate(key);
     let t_a = |key: &str, args| i18n.translate_with_args(key, args);
 
-    let text = ctx.text().unwrap();
+    let text = if ctx.is_callback_query() {
+        ctx.query()
+    } else {
+        ctx.text()
+    }
+    .unwrap();
     let args = text.split_whitespace().skip(1).collect::<Vec<&str>>();
 
     if args.is_empty() {
@@ -35,11 +42,17 @@ async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
     } else {
         if let Ok(id) = args[0].parse::<i64>() {
             if let Ok(anime) = ani.get_anime(id).await {
-                let text = utils::gen_anime_info(&anime);
+                let mut text = utils::gen_anime_info(&anime);
                 let image_url = format!("https://img.anili.st/media/{}", anime.id);
 
-                ctx.reply(InputMessage::html(text).photo_url(image_url))
-                    .await?;
+                if ctx.is_callback_query() {
+                    text.push_str(&format!("\n<a href='{}'>ㅤ</a>", image_url));
+                    ctx.edit(InputMessage::html(text).link_preview(true))
+                        .await?;
+                } else {
+                    ctx.reply(InputMessage::html(text).photo_url(image_url))
+                        .await?;
+                }
             } else {
                 ctx.reply(InputMessage::html(t("anime_not_found"))).await?;
             }
@@ -49,9 +62,14 @@ async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
             if let Some(result) = ani.search_anime(&title).await {
                 let buttons = result
                     .into_iter()
+                    .take(6)
                     .map(|anime| {
                         vec![button::inline(
-                            anime.title.romaji.unwrap_or(anime.title.native),
+                            format!(
+                                "{0}. {1}",
+                                anime.id,
+                                anime.title.romaji.unwrap_or(anime.title.native)
+                            ),
                             format!("anime {}", anime.id),
                         )]
                     })

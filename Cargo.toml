@@ -15,7 +15,8 @@ edition = "2021"
 ferogram = { path = "../ferogram/lib/ferogram" }
 grammers-client = { git = "https://github.com/Lonami/grammers.git", features = ["html", "serde"] }
 
-rust-anilist = { git = "https://github.com/AmanoTeam/rust-anilist.git" }
+# rust-anilist = { git = "https://github.com/AmanoTeam/rust-anilist.git" }
+rust-anilist = { path = "../rust-anilist" }
 
 log = "*"
 toml = "*"

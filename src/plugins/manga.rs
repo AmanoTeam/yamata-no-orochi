@@ -27,7 +27,12 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
     let t = |key: &str| i18n.translate(key);
     let t_a = |key: &str, args| i18n.translate_with_args(key, args);
 
-    let text = ctx.text().unwrap();
+    let text = if ctx.is_callback_query() {
+        ctx.query()
+    } else {
+        ctx.text()
+    }
+    .unwrap();
     let args = text.split_whitespace().skip(1).collect::<Vec<&str>>();
 
     if args.is_empty() {
@@ -35,7 +40,7 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
     } else {
         if let Ok(id) = args[0].parse::<i64>() {
             if let Ok(manga) = ani.get_manga(id).await {
-                let text = utils::gen_manga_info(&manga);
+                let mut text = utils::gen_manga_info(&manga);
                 let image_url = manga.banner.unwrap_or(
                     manga.cover.extra_large.unwrap_or(
                         manga
@@ -45,8 +50,10 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
                     ),
                 );
 
-                if image_url.is_empty() {
-                    ctx.reply(InputMessage::html(text)).await?;
+                if ctx.is_callback_query() {
+                    text.push_str(&format!("\n<a href='{}'>ㅤ</a>", image_url));
+                    ctx.edit(InputMessage::html(text).link_preview(true))
+                        .await?;
                 } else {
                     ctx.reply(InputMessage::html(text).photo_url(image_url))
                         .await?;
@@ -60,6 +67,7 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
             if let Some(result) = ani.search_manga(&title).await {
                 let buttons = result
                     .into_iter()
+                    .take(6)
                     .map(|manga| {
                         vec![button::inline(
                             manga.title.romaji.unwrap_or(manga.title.native),

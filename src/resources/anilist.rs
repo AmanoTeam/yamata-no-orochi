@@ -37,7 +37,7 @@ impl AniList {
     ///
     /// Returns an error if the anime could not be retrieved.
     pub async fn get_anime(&self, id: i64) -> Result<Anime, Error> {
-        self.client.get_anime(Some(id), None).await
+        self.client.get_anime(id).await
     }
 
     /// Gets a manga by its ID.
@@ -50,7 +50,7 @@ impl AniList {
     ///
     /// Returns an error if the manga could not be retrieved.
     pub async fn get_manga(&self, id: i64) -> Result<Manga, Error> {
-        self.client.get_manga(Some(id), None).await
+        self.client.get_manga(id).await
     }
 
     /// Searches for animes by its title.
@@ -62,9 +62,8 @@ impl AniList {
     /// # Errors
     ///
     /// Returns an error if the anime could not be retrieved.
-    pub async fn search_anime(&self, _title: &str) -> Option<Vec<Anime>> {
-        unimplemented!();
-        // self.client.search_anime(title).await
+    pub async fn search_anime(&self, title: &str) -> Option<Vec<Anime>> {
+        self.client.search_anime(title, 1, 30).await
     }
 
     /// Searches for mangas by its title.
@@ -76,8 +75,8 @@ impl AniList {
     /// # Errors
     ///
     /// Returns an error if the manga could not be retrieved.
-    pub async fn search_manga(&self, _title: &str) -> Option<Vec<Anime>> {
+    pub async fn search_manga(&self, _title: &str) -> Option<Vec<Manga>> {
         unimplemented!();
-        // self.client.search_manga(title).await
+        // self.client.search_manga(title, 1, 30).await
     }
 }
