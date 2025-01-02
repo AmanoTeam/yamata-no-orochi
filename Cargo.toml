@@ -1,0 +1,27 @@
+[package]
+name = "yamata-no-orochi"
+version = "0.1.0"
+authors = ["Andriel Ferreira <andrielfr@proton.me>"]
+license = "MIT or Apache-2.0"
+description = """
+A Telegram bot that uses the AniList API to search for anime and manga.
+"""
+homepage = "https://github.com/AmanoTeam/yamata-no-orochi"
+repository = "https://github.com/AmanoTeam/yamata-no-orochi"
+keywords = ["telegram", "bot", "anilist", "anime", "manga"]
+edition = "2021"
+
+[dependencies]
+ferogram = { path = "../ferogram/lib/ferogram" }
+grammers-client = { git = "https://github.com/Lonami/grammers.git", features = ["html", "serde"] }
+
+rust-anilist = { git = "https://github.com/AmanoTeam/rust-anilist.git" }
+
+log = "*"
+toml = "*"
+tokio = { version = "1", features = ["macros", "rt"] }
+serde = { version = "1", features = ["derive"] }
+maplit = "1"
+env_logger = "*"
+serde_json = "1"
+tokio-uring = "*"
