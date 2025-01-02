@@ -8,4 +8,15 @@
 
 //! Plugins.
 
+use ferogram::Router;
+
+pub mod anime;
+pub mod manga;
 pub mod start;
+
+pub fn setup(router: Router) -> Router {
+    router
+        .router(start::setup)
+        .router(anime::setup)
+        .router(manga::setup)
+}

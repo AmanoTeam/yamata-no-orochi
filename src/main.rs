@@ -11,9 +11,10 @@
 mod config;
 mod plugins;
 mod resources;
+pub mod utils;
 
 use ferogram::{Client, Injector, Result};
-use resources::i18n::I18n;
+use resources::{anilist::AniList, i18n::I18n};
 
 fn main() -> Result<()> {
     tokio_uring::start(async {
@@ -55,12 +56,13 @@ fn main() -> Result<()> {
         i18n.load()?;
         injector.insert(i18n);
 
+        // Initialize and register the AniList resource.
+        let anilist = AniList::new();
+        injector.insert(anilist);
+
         // Register the handlers and run the client.
         client
-            .dispatcher(|dp| {
-                dp.resources(|_| injector)
-                    .router(|_| plugins::start::setup())
-            })
+            .dispatcher(|dp| dp.resources(|_| injector).router(plugins::setup))
             .run()
             .await?;
 

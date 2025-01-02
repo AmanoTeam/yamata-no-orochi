@@ -13,10 +13,12 @@ use grammers_client::InputMessage;
 
 use crate::resources::i18n::I18n;
 
-pub fn setup() -> Router {
-    Router::default().handler(handler::new_message(filter::command("start")).then(start))
+/// The plugin setup.
+pub fn setup(router: Router) -> Router {
+    router.handler(handler::new_message(filter::command("start")).then(start))
 }
 
+/// The start command handler.
 async fn start(ctx: Context, i18n: I18n) -> Result<()> {
     let t = |key: &str| i18n.translate(key);
 

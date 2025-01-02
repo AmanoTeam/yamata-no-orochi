@@ -57,9 +57,15 @@ impl I18n {
             .map(|entry| entry.expect("failed to read entry"))
             .map(|entry| {
                 let path = entry.path();
-                let locale = path.file_stem().unwrap().to_str().unwrap().to_string();
-                let content = std::fs::read_to_string(path).unwrap();
-                let value: Value = serde_json::from_str(&content).unwrap();
+                let locale = path
+                    .file_stem()
+                    .expect("failed to get file stem")
+                    .to_str()
+                    .expect("failed to convert file stem to string")
+                    .to_string();
+                let content = std::fs::read_to_string(path).expect("failed to read file");
+                let value: Value = serde_json::from_str(&content).expect("failed to parse file");
+
                 (locale, value)
             })
             .collect::<HashMap<String, Value>>();
@@ -76,7 +82,10 @@ impl I18n {
     ///
     /// Returns an error if the current locale could not be retrieved.
     pub fn locale(&self) -> String {
-        let current_locale = self.current_locale.try_lock().unwrap();
+        let current_locale = self
+            .current_locale
+            .try_lock()
+            .expect("failed to lock mutex");
         current_locale.clone()
     }
 
@@ -90,7 +99,10 @@ impl I18n {
     ///
     /// Returns an error if the locale could not be set.
     pub fn set_locale<L: ToString>(&self, locale: L) {
-        let mut current_locale = self.current_locale.try_lock().unwrap();
+        let mut current_locale = self
+            .current_locale
+            .try_lock()
+            .expect("failed to lock mutex");
         *current_locale = locale.to_string();
     }
 

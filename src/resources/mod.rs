@@ -8,4 +8,5 @@
 
 //! Resources.
 
+pub mod anilist;
 pub mod i18n;

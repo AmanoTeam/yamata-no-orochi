@@ -1640,7 +1640,7 @@ dependencies = [
 [[package]]
 name = "rust-anilist"
 version = "0.1.0"
-source = "git+https://github.com/AmanoTeam/rust-anilist.git#da3869711c0ea6ff744cef551af68ddd8d58f2f6"
+source = "git+https://github.com/AmanoTeam/rust-anilist.git#a389643811dcb86c235e7c9d4b25728050734a56"
 dependencies = [
  "reqwest",
  "serde",
