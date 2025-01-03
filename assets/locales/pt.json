@@ -1,11 +1,15 @@
 {
     "start": "<b>Olá</b>! Eu sou o <s>Yamata no Orochi</s>, um bot que usa a <a href='https://docs.anilist.co/'>AniList API</a> para pesquisar por anime e manga.",
 
-    "search_results": "Resultados para <b>${title}</b>:",
+    "no_results": "Nenhum resultado encontrado.",
+    "search_results": "Resultados para <b>${search}</b>:",
 
-    "anime_usage": "Use <code>/anime <id/nome></code> para pesquisar por anime e manga.",
+    "anime_usage": "Use <code>/anime &lt;id/nome&gt;</code> para pesquisar por anime.",
     "anime_not_found": "Anime não encontrado.",
 
-    "manga_usage": "Use <code>/manga <id/nome></code> para pesquisar por manga.",
-    "manga_not_found": "Manga não encontrado."
+    "manga_usage": "Use <code>/manga &lt;id/nome&gt;</code> para pesquisar por manga.",
+    "manga_not_found": "Manga não encontrado.",
+
+    "user_usage": "Use <code>/user &lt;id&gt;</code> para pesquisar por usuário.",
+    "user_not_found": "Usuário não encontrado."
 }

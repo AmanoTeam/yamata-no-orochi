@@ -8,7 +8,7 @@
 
 //! The anime plugin.
 
-use ferogram::{filter, handler, Context, Router};
+use ferogram::{filter, handler, Context, Result, Router};
 use grammers_client::{button, reply_markup, InputMessage};
 use maplit::hashmap;
 
@@ -20,12 +20,12 @@ use crate::{
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
     router
-        .handler(handler::new_message(filter::command("anime")).then(anime))
+        .handler(handler::new_message(filter::commands(&["a", "anime"])).then(anime))
         .handler(handler::callback_query(filter::regex(r"^anime (\d+)")).then(anime))
 }
 
 /// The anime command handler.
-async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
+async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     let t = |key: &str| i18n.translate(key);
     let t_a = |key: &str, args| i18n.translate_with_args(key, args);
 
@@ -45,8 +45,8 @@ async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
                 let mut text = utils::gen_anime_info(&anime);
                 let image_url = format!("https://img.anili.st/media/{}", anime.id);
 
-                if ctx.is_callback_query() {
-                    text.push_str(&format!("\n<a href='{}'>ㅤ</a>", image_url));
+                if ctx.is_callback_query() && !ctx.has_photo().await {
+                    text.push_str(&format!("<a href='{}'> </a>", image_url));
                     ctx.edit(InputMessage::html(text).link_preview(true))
                         .await?;
                 } else {
@@ -62,25 +62,26 @@ async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> ferogram::Result<()> {
             if let Some(result) = ani.search_anime(&title).await {
                 let buttons = result
                     .into_iter()
-                    .take(6)
                     .map(|anime| {
                         vec![button::inline(
-                            format!(
-                                "{0}. {1}",
-                                anime.id,
-                                anime.title.romaji.unwrap_or(anime.title.native)
-                            ),
+                            anime.title.romaji.unwrap_or(anime.title.native),
                             format!("anime {}", anime.id),
                         )]
                     })
                     .collect::<Vec<_>>();
+
+                if buttons.is_empty() {
+                    ctx.reply(InputMessage::html(t("no_results"))).await?;
+                    return Ok(());
+                }
+
                 ctx.reply(
-                    InputMessage::html(t_a("search_results", hashmap! { "title" => title }))
+                    InputMessage::html(t_a("search_results", hashmap! { "search" => title }))
                         .reply_markup(&reply_markup::inline(buttons)),
                 )
                 .await?;
             } else {
-                ctx.reply(InputMessage::html(t("anime_not_found"))).await?;
+                ctx.reply(InputMessage::html(t("no_results"))).await?;
             }
         }
     }

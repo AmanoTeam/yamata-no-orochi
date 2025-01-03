@@ -13,10 +13,12 @@ use ferogram::Router;
 pub mod anime;
 pub mod manga;
 pub mod start;
+pub mod user;
 
 pub fn setup(router: Router) -> Router {
     router
         .router(start::setup)
         .router(anime::setup)
         .router(manga::setup)
+        .router(user::setup)
 }

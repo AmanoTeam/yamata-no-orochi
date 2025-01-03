@@ -8,7 +8,8 @@
 
 //! Utility functions.
 
-use rust_anilist::models::{Anime, Format, Manga, Status};
+use chrono::DateTime;
+use rust_anilist::models::{Anime, Format, Manga, Status, User};
 
 /// Escapes special HTML characters in a given text to their corresponding HTML entities.
 ///
@@ -99,15 +100,10 @@ pub fn gen_anime_info(anime: &Anime) -> String {
 
     if let Some(genres) = anime.genres.as_ref() {
         text.push_str(&format!(
-            "🌀 | <b>Genres</b>: <i>{}</i>\n",
+            "🎭 | <b>Genres</b>: <i>{}</i>\n",
             genres.join(", ")
         ));
     }
-
-    text.push_str(&format!(
-        "👤 | <b>Popularity</b>: <i>{}</i>\n",
-        anime.popularity.unwrap_or(0)
-    ));
 
     if let Some(start_date) = anime.start_date.as_ref() {
         let mut date = String::new();
@@ -145,8 +141,8 @@ pub fn gen_anime_info(anime: &Anime) -> String {
     }
 
     text.push_str(&format!(
-        "\n<blockquote>{}</blockquote>\n",
-        shorten_text(&anime.description, 550).as_str()
+        "\n<blockquote><i>{}</i></blockquote>\n",
+        shorten_text(&anime.description, 500).as_str()
     ));
 
     text.push_str(&format!("\n🔗 | <a href=\"{}\">AniList</a>", anime.url));
@@ -214,20 +210,18 @@ pub fn gen_manga_info(manga: &Manga) -> String {
 
     if let Some(genres) = manga.genres.as_ref() {
         text.push_str(&format!(
-            "🌀 | <b>Genres</b>: <i>{}</i>\n",
+            "🎭 | <b>Genres</b>: <i>{}</i>\n",
             genres.join(", ")
         ));
     }
 
-    text.push_str(&format!(
-        "🔢 | <b>Chapters</b>: <i>{0}</i>\n",
-        manga.chapters.unwrap_or(0),
-    ));
+    if let Some(chapters) = manga.chapters {
+        text.push_str(&format!("🔢 | <b>Chapters</b>: <i>{0}</i>\n", chapters));
+    }
 
-    text.push_str(&format!(
-        "👤 | <b>Popularity</b>: <i>{}</i>\n",
-        manga.popularity.unwrap_or(0)
-    ));
+    if let Some(volumes) = manga.volumes {
+        text.push_str(&format!("📚 | <b>Volumes</b>: <i>{0}</i>\n", volumes));
+    }
 
     if let Some(start_date) = manga.start_date.as_ref() {
         let mut date = String::new();
@@ -265,8 +259,8 @@ pub fn gen_manga_info(manga: &Manga) -> String {
     }
 
     text.push_str(&format!(
-        "\n<blockquote>{}</blockquote>\n",
-        shorten_text(&manga.description, 250).as_str()
+        "\n<blockquote><i>{}</i></blockquote>\n",
+        shorten_text(&manga.description, 300).as_str()
     ));
 
     text.push_str(&format!("\n🔗 | <a href=\"{}\">AniList</a>", manga.url));
@@ -276,6 +270,36 @@ pub fn gen_manga_info(manga: &Manga) -> String {
             id
         ));
     }
+
+    text
+}
+
+/// Generates a formatted string containing detailed information about a user.
+///
+/// # Arguments
+///
+/// * `user` - A reference to an `User` struct containing the user details.
+pub fn gen_user_info(user: &User) -> String {
+    let mut text = format!("↓ <code>{0}</code> → <b>{1}</b>\n\n", user.id, user.name);
+
+    if let Some(created_at) = DateTime::from_timestamp(user.created_at, 0) {
+        text.push_str(&format!(
+            "📅 | <b>Joined At</b>: <i>{}</i>\n",
+            created_at.format("%d/%m/%Y")
+        ));
+    }
+
+    if let Some(about) = user.about.as_ref() {
+        text.push_str(&format!(
+            "\n<blockquote>{}</blockquote>\n",
+            shorten_text(about, 250).as_str()
+        ));
+    }
+
+    text.push_str(&format!(
+        "\n🔗 | <a href=\"https://anilist.co/user/{}\">AniList</a>",
+        user.id
+    ));
 
     text
 }

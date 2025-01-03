@@ -9,7 +9,7 @@
 //! The AniList resource.
 
 use rust_anilist::{
-    models::{Anime, Manga},
+    models::{Anime, Manga, User},
     Error,
 };
 
@@ -53,6 +53,19 @@ impl AniList {
         self.client.get_manga(id).await
     }
 
+    /// Gets a user by its ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `id` - The user ID.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the user could not be retrieved.
+    pub async fn get_user(&self, id: i64) -> Result<User, Error> {
+        self.client.get_user(id).await
+    }
+
     /// Searches for animes by its title.
     ///
     /// # Arguments
@@ -63,7 +76,7 @@ impl AniList {
     ///
     /// Returns an error if the anime could not be retrieved.
     pub async fn search_anime(&self, title: &str) -> Option<Vec<Anime>> {
-        self.client.search_anime(title, 1, 30).await
+        self.client.search_anime(title, 1, 6).await
     }
 
     /// Searches for mangas by its title.
@@ -75,8 +88,20 @@ impl AniList {
     /// # Errors
     ///
     /// Returns an error if the manga could not be retrieved.
-    pub async fn search_manga(&self, _title: &str) -> Option<Vec<Manga>> {
-        unimplemented!();
-        // self.client.search_manga(title, 1, 30).await
+    pub async fn search_manga(&self, title: &str) -> Option<Vec<Manga>> {
+        self.client.search_manga(title, 1, 6).await
+    }
+
+    /// Searches for users by its name.
+    ///
+    /// # Arguments
+    ///
+    /// * `name` - The user name.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the user could not be retrieved.
+    pub async fn search_user(&self, name: &str) -> Option<Vec<User>> {
+        self.client.search_user(name, 1, 6).await
     }
 }
