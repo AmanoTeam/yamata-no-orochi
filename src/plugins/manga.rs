@@ -53,7 +53,7 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                 );
 
                 if ctx.is_callback_query() && !ctx.has_photo().await {
-                    text.push_str(&format!("<a href='{}'> </a>", image_url));
+                    text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
                     ctx.edit(InputMessage::html(text).link_preview(true))
                         .await?;
                 } else {

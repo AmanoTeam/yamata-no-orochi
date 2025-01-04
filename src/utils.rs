@@ -87,13 +87,12 @@ pub fn gen_anime_info(anime: &Anime) -> String {
             Format::Tv => "📺",
             Format::Ona => "🎞",
             Format::Ova => "🎞",
-            Format::Novel => "📖",
-            Format::Manga => "📚",
-            Format::Movie => "🎞",
+            Format::Movie => "🎥",
             Format::Music => "🎵",
             Format::OneShot => "📖",
             Format::Special => "🎌",
             Format::TvShort => "📺",
+            _ => "📖",
         },
         anime.format
     ));
@@ -194,16 +193,12 @@ pub fn gen_manga_info(manga: &Manga) -> String {
     text.push_str(&format!(
         "{0} | <b>Format</b>: <i>{1:?}</i>\n",
         match manga.format {
-            Format::Tv => "📺",
-            Format::Ona => "🎞",
-            Format::Ova => "🎞",
             Format::Novel => "📖",
             Format::Manga => "📚",
-            Format::Movie => "🎞",
             Format::Music => "🎵",
             Format::OneShot => "📖",
             Format::Special => "🎌",
-            Format::TvShort => "📺",
+            _ => "🎥",
         },
         manga.format
     ));

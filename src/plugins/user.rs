@@ -24,7 +24,7 @@ pub fn setup(router: Router) -> Router {
         .handler(handler::callback_query(filter::regex(r"^user (\d+)")).then(user))
 }
 
-//
+/// The user handler.
 async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     let t = |key: &str| i18n.translate(key);
     let t_a = |key: &str, args| i18n.translate_with_args(key, args);
@@ -40,13 +40,13 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     if args.is_empty() {
         ctx.reply(InputMessage::html(t("user_usage"))).await?;
     } else {
-        if let Ok(id) = args[0].parse::<i64>() {
+        if let Ok(id) = args[0].parse::<i32>() {
             if let Ok(user) = ani.get_user(id).await {
                 let mut text = utils::gen_user_info(&user);
                 let mut image_url = format!("https://img.anili.st/user/{}", user.id,);
 
                 if ctx.is_callback_query() && !ctx.has_photo().await {
-                    text.push_str(&format!("<a href='{}'> </a>", image_url));
+                    text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
                     ctx.edit(InputMessage::html(text).link_preview(true))
                         .await?;
                 } else {

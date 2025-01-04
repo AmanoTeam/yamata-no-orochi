@@ -62,7 +62,7 @@ impl AniList {
     /// # Errors
     ///
     /// Returns an error if the user could not be retrieved.
-    pub async fn get_user(&self, id: i64) -> Result<User, Error> {
+    pub async fn get_user(&self, id: i32) -> Result<User, Error> {
         self.client.get_user(id).await
     }
 
