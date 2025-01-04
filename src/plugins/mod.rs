@@ -15,6 +15,7 @@ pub mod manga;
 pub mod start;
 pub mod user;
 
+/// The plugins setup.
 pub fn setup(router: Router) -> Router {
     router
         .router(start::setup)

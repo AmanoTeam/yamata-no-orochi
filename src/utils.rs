@@ -8,7 +8,6 @@
 
 //! Utility functions.
 
-use chrono::DateTime;
 use rust_anilist::models::{Anime, Format, Manga, Status, User};
 
 /// Escapes special HTML characters in a given text to their corresponding HTML entities.
@@ -60,11 +59,11 @@ pub fn gen_anime_info(anime: &Anime) -> String {
     let mut text = format!(
         "↓ <code>{0}</code> → <b>{1}</b>\n\n",
         anime.id,
-        anime.title.romaji.as_ref().unwrap_or(&anime.title.native),
+        anime.title.romaji(),
     );
 
     text.push_str(&format!(
-        "{0} | <b>Status</b>: <i>{1:?}</i>\n",
+        "{0} | <b>Status</b>: <i>{1}</i>\n",
         match anime.status {
             Status::Hiatus => "🕰",
             Status::Paused => "⏸",
@@ -82,7 +81,7 @@ pub fn gen_anime_info(anime: &Anime) -> String {
     ));
 
     text.push_str(&format!(
-        "{0} | <b>Format</b>: <i>{1:?}</i>\n",
+        "{0} | <b>Format</b>: <i>{1}</i>\n",
         match anime.format {
             Format::Tv => "📺",
             Format::Ona => "🎞",
@@ -104,39 +103,17 @@ pub fn gen_anime_info(anime: &Anime) -> String {
         ));
     }
 
-    if let Some(start_date) = anime.start_date.as_ref() {
-        let mut date = String::new();
-
-        if let Some(day) = start_date.day {
-            date.push_str(&format!("{:0>2}", day));
-        }
-        if let Some(month) = start_date.month {
-            date.push_str(&format!("/{:0>2}", month));
-        }
-        if let Some(year) = start_date.year {
-            date.push_str(&format!("/{}", year));
-        }
-
-        if !date.is_empty() {
-            text.push_str(&format!("📅 | <b>Start Date</b>: <i>{}</i>\n", date));
-        }
+    if let Some(date) = anime.start_date.as_ref() {
+        text.push_str(&format!(
+            "📅 | <b>Start Date</b>: <i>{}</i>\n",
+            date.format("{dd}/{mm}/{yyyy}")
+        ));
     }
-    if let Some(end_date) = anime.end_date.as_ref() {
-        let mut date = String::new();
-
-        if let Some(day) = end_date.day {
-            date.push_str(&format!("{:0>2}", day));
-        }
-        if let Some(month) = end_date.month {
-            date.push_str(&format!("/{:0>2}", month));
-        }
-        if let Some(year) = end_date.year {
-            date.push_str(&format!("/{}", year));
-        }
-
-        if !date.is_empty() {
-            text.push_str(&format!("📆 | <b>End Date</b>: <i>{}</i>\n", date));
-        }
+    if let Some(date) = anime.end_date.as_ref() {
+        text.push_str(&format!(
+            "📆 | <b>End Date</b>: <i>{}</i>\n",
+            date.format("{dd}/{mm}/{yyyy}")
+        ));
     }
 
     text.push_str(&format!(
@@ -164,7 +141,7 @@ pub fn gen_manga_info(manga: &Manga) -> String {
     let mut text = format!(
         "↓ <code>{0}</code> → <b>{1}</b>\n\n",
         manga.id,
-        manga.title.romaji.as_ref().unwrap_or(&manga.title.native),
+        manga.title.romaji(),
     );
 
     text.push_str(&format!(
@@ -173,7 +150,7 @@ pub fn gen_manga_info(manga: &Manga) -> String {
     ));
 
     text.push_str(&format!(
-        "{0} | <b>Status</b>: <i>{1:?}</i>\n",
+        "{0} | <b>Status</b>: <i>{1}</i>\n",
         match manga.status {
             Status::Hiatus => "🕰",
             Status::Paused => "⏸",
@@ -191,7 +168,7 @@ pub fn gen_manga_info(manga: &Manga) -> String {
     ));
 
     text.push_str(&format!(
-        "{0} | <b>Format</b>: <i>{1:?}</i>\n",
+        "{0} | <b>Format</b>: <i>{1}</i>\n",
         match manga.format {
             Format::Novel => "📖",
             Format::Manga => "📚",
@@ -211,46 +188,24 @@ pub fn gen_manga_info(manga: &Manga) -> String {
     }
 
     if let Some(chapters) = manga.chapters {
-        text.push_str(&format!("🔢 | <b>Chapters</b>: <i>{0}</i>\n", chapters));
+        text.push_str(&format!("🔢 | <b>Chapters</b>: <i>{}</i>\n", chapters));
     }
 
     if let Some(volumes) = manga.volumes {
-        text.push_str(&format!("📚 | <b>Volumes</b>: <i>{0}</i>\n", volumes));
+        text.push_str(&format!("📚 | <b>Volumes</b>: <i>{}</i>\n", volumes));
     }
 
-    if let Some(start_date) = manga.start_date.as_ref() {
-        let mut date = String::new();
-
-        if let Some(day) = start_date.day {
-            date.push_str(&format!("{:0>2}", day));
-        }
-        if let Some(month) = start_date.month {
-            date.push_str(&format!("/{:0>2}", month));
-        }
-        if let Some(year) = start_date.year {
-            date.push_str(&format!("/{}", year));
-        }
-
-        if !date.is_empty() {
-            text.push_str(&format!("📅 | <b>Start Date</b>: <i>{}</i>\n", date));
-        }
+    if let Some(date) = manga.start_date.as_ref() {
+        text.push_str(&format!(
+            "📅 | <b>Start Date</b>: <i>{}</i>\n",
+            date.format("{dd}/{mm}/{yyyy}")
+        ));
     }
-    if let Some(end_date) = manga.end_date.as_ref() {
-        let mut date = String::new();
-
-        if let Some(day) = end_date.day {
-            date.push_str(&format!("{:0>2}", day));
-        }
-        if let Some(month) = end_date.month {
-            date.push_str(&format!("/{:0>2}", month));
-        }
-        if let Some(year) = end_date.year {
-            date.push_str(&format!("/{}", year));
-        }
-
-        if !date.is_empty() {
-            text.push_str(&format!("📆 | <b>End Date</b>: <i>{}</i>\n", date));
-        }
+    if let Some(date) = manga.end_date.as_ref() {
+        text.push_str(&format!(
+            "📆 | <b>End Date</b>: <i>{}</i>\n",
+            date.format("{dd}/{mm}/{yyyy}")
+        ));
     }
 
     text.push_str(&format!(
@@ -276,13 +231,6 @@ pub fn gen_manga_info(manga: &Manga) -> String {
 /// * `user` - A reference to an `User` struct containing the user details.
 pub fn gen_user_info(user: &User) -> String {
     let mut text = format!("↓ <code>{0}</code> → <b>{1}</b>\n\n", user.id, user.name);
-
-    if let Some(created_at) = DateTime::from_timestamp(user.created_at, 0) {
-        text.push_str(&format!(
-            "📅 | <b>Joined At</b>: <i>{}</i>\n",
-            created_at.format("%d/%m/%Y")
-        ));
-    }
 
     if let Some(about) = user.about.as_ref() {
         text.push_str(&format!(

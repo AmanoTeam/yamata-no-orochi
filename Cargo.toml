@@ -23,7 +23,6 @@ rand = "*"
 toml = "*"
 tokio = { version = "1", features = ["macros", "rt"] }
 serde = { version = "1", features = ["derive"] }
-chrono = "*"
 maplit = "1"
 env_logger = "*"
 serde_json = "1"

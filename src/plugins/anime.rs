@@ -64,7 +64,7 @@ async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                     .into_iter()
                     .map(|anime| {
                         vec![button::inline(
-                            anime.title.romaji.unwrap_or(anime.title.native),
+                            anime.title.romaji(),
                             format!("anime {}", anime.id),
                         )]
                     })

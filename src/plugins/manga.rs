@@ -71,7 +71,7 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                     .into_iter()
                     .map(|manga| {
                         vec![button::inline(
-                            manga.title.romaji.unwrap_or(manga.title.native),
+                            manga.title.romaji(),
                             format!("manga {}", manga.id),
                         )]
                     })
