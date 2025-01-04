@@ -1,4 +1,14 @@
 {
+    "score": "Nota",
+    "status": "Status",
+    "format": "Formato",
+    "genres": "Gêneros",
+    "volumes": "Volumes",
+    "chapters": "Capítulos",
+    "episodes": "Episódios",
+    "end_date": "Data de Término",
+    "start_date": "Data de Início",
+
     "start": "<b>Olá</b>! Eu sou o <s>Yamata no Orochi</s>, um bot que usa a <a href='https://docs.anilist.co/'>AniList API</a> para pesquisar por anime e manga.",
 
     "no_results": "Nenhum resultado encontrado.",

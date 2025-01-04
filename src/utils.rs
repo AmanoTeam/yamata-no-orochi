@@ -10,6 +10,8 @@
 
 use rust_anilist::models::{Anime, Format, Manga, Status, User};
 
+use crate::resources::i18n::I18n;
+
 /// Escapes special HTML characters in a given text to their corresponding HTML entities.
 ///
 /// The following replacements are made:
@@ -55,7 +57,10 @@ pub fn shorten_text<T: ToString>(text: T, mut max_length: usize) -> String {
 /// # Arguments
 ///
 /// * `anime` - A reference to an `Anime` struct containing the anime details.
-pub fn gen_anime_info(anime: &Anime) -> String {
+/// * `i18n` - A reference to an `I18n` struct containing the translations.
+pub fn gen_anime_info(anime: &Anime, i18n: &I18n) -> String {
+    let t = |key: &str| i18n.translate(key);
+
     let mut text = format!(
         "↓ <code>{0}</code> → <b>{1}</b>\n\n",
         anime.id,
@@ -63,7 +68,7 @@ pub fn gen_anime_info(anime: &Anime) -> String {
     );
 
     text.push_str(&format!(
-        "{0} | <b>Status</b>: <i>{1}</i>\n",
+        "{0} | <b>{1}</b>: <i>{2}</i>\n",
         match anime.status {
             Status::Hiatus => "🕰",
             Status::Paused => "⏸",
@@ -77,11 +82,12 @@ pub fn gen_anime_info(anime: &Anime) -> String {
             Status::Repeating => "🔁",
             Status::NotYetReleased => "🔜",
         },
+        t("status"),
         anime.status
     ));
 
     text.push_str(&format!(
-        "{0} | <b>Format</b>: <i>{1}</i>\n",
+        "{0} | <b>{1}</b>: <i>{2}</i>\n",
         match anime.format {
             Format::Tv => "📺",
             Format::Ona => "🎞",
@@ -93,25 +99,29 @@ pub fn gen_anime_info(anime: &Anime) -> String {
             Format::TvShort => "📺",
             _ => "📖",
         },
+        t("format"),
         anime.format
     ));
 
     if let Some(genres) = anime.genres.as_ref() {
         text.push_str(&format!(
-            "🎭 | <b>Genres</b>: <i>{}</i>\n",
+            "🎭 | <b>{0}</b>: <i>{1}</i>\n",
+            t("genres"),
             genres.join(", ")
         ));
     }
 
     if let Some(date) = anime.start_date.as_ref() {
         text.push_str(&format!(
-            "📅 | <b>Start Date</b>: <i>{}</i>\n",
+            "📅 | <b>{0}</b>: <i>{1}</i>\n",
+            t("start_date"),
             date.format("{dd}/{mm}/{yyyy}")
         ));
     }
     if let Some(date) = anime.end_date.as_ref() {
         text.push_str(&format!(
-            "📆 | <b>End Date</b>: <i>{}</i>\n",
+            "📆 | <b>{0}</b>: <i>{1}</i>\n",
+            t("end_date"),
             date.format("{dd}/{mm}/{yyyy}")
         ));
     }
@@ -137,7 +147,10 @@ pub fn gen_anime_info(anime: &Anime) -> String {
 /// # Arguments
 ///
 /// * `manga` - A reference to an `Manga` struct containing the manga details.
-pub fn gen_manga_info(manga: &Manga) -> String {
+/// * `i18n` - A reference to an `I18n` struct containing the translations.
+pub fn gen_manga_info(manga: &Manga, i18n: &I18n) -> String {
+    let t = |key: &str| i18n.translate(key);
+
     let mut text = format!(
         "↓ <code>{0}</code> → <b>{1}</b>\n\n",
         manga.id,
@@ -145,12 +158,13 @@ pub fn gen_manga_info(manga: &Manga) -> String {
     );
 
     text.push_str(&format!(
-        "🌟 | <b>Score</b>: <i>{}</i>\n",
+        "🌟 | <b>{0}</b>: <i>{1}</i>\n",
+        t("score"),
         manga.average_score.unwrap_or(0)
     ));
 
     text.push_str(&format!(
-        "{0} | <b>Status</b>: <i>{1}</i>\n",
+        "{0} | <b>{1}</b>: <i>{2}</i>\n",
         match manga.status {
             Status::Hiatus => "🕰",
             Status::Paused => "⏸",
@@ -164,11 +178,12 @@ pub fn gen_manga_info(manga: &Manga) -> String {
             Status::Repeating => "🔁",
             Status::NotYetReleased => "🔜",
         },
+        t("status"),
         manga.status
     ));
 
     text.push_str(&format!(
-        "{0} | <b>Format</b>: <i>{1}</i>\n",
+        "{0} | <b>{1}</b>: <i>{2}</i>\n",
         match manga.format {
             Format::Novel => "📖",
             Format::Manga => "📚",
@@ -177,33 +192,45 @@ pub fn gen_manga_info(manga: &Manga) -> String {
             Format::Special => "🎌",
             _ => "🎥",
         },
+        t("format"),
         manga.format
     ));
 
     if let Some(genres) = manga.genres.as_ref() {
         text.push_str(&format!(
-            "🎭 | <b>Genres</b>: <i>{}</i>\n",
+            "🎭 | <b>{0}</b>: <i>{1}</i>\n",
+            t("genres"),
             genres.join(", ")
         ));
     }
 
     if let Some(chapters) = manga.chapters {
-        text.push_str(&format!("🔢 | <b>Chapters</b>: <i>{}</i>\n", chapters));
+        text.push_str(&format!(
+            "🔢 | <b>{0}</b>: <i>{1}</i>\n",
+            t("chapters"),
+            chapters
+        ));
     }
 
     if let Some(volumes) = manga.volumes {
-        text.push_str(&format!("📚 | <b>Volumes</b>: <i>{}</i>\n", volumes));
+        text.push_str(&format!(
+            "📚 | <b>{0}</b>: <i>{1}</i>\n",
+            t("volumes"),
+            volumes
+        ));
     }
 
     if let Some(date) = manga.start_date.as_ref() {
         text.push_str(&format!(
-            "📅 | <b>Start Date</b>: <i>{}</i>\n",
+            "📅 | <b>{0}</b>: <i>{1}</i>\n",
+            t("start_date"),
             date.format("{dd}/{mm}/{yyyy}")
         ));
     }
     if let Some(date) = manga.end_date.as_ref() {
         text.push_str(&format!(
-            "📆 | <b>End Date</b>: <i>{}</i>\n",
+            "📆 | <b>{0}</b>: <i>{1}</i>\n",
+            t("end_date"),
             date.format("{dd}/{mm}/{yyyy}")
         ));
     }
@@ -230,7 +257,7 @@ pub fn gen_manga_info(manga: &Manga) -> String {
 ///
 /// * `user` - A reference to an `User` struct containing the user details.
 pub fn gen_user_info(user: &User) -> String {
-    let mut text = format!("↓ <code>{0}</code> → <b>{1}</b>\n\n", user.id, user.name);
+    let mut text = format!("↓ <code>{0}</code> → <b>{1}</b>\n", user.id, user.name);
 
     if let Some(about) = user.about.as_ref() {
         text.push_str(&format!(

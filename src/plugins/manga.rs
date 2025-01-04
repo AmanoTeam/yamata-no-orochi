@@ -11,6 +11,7 @@
 use ferogram::{filter, handler, Context, Result, Router};
 use grammers_client::{button, reply_markup, InputMessage};
 use maplit::hashmap;
+use rust_anilist::models::Manga;
 
 use crate::{
     resources::{anilist::AniList, i18n::I18n},
@@ -42,24 +43,7 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     } else {
         if let Ok(id) = args[0].parse::<i64>() {
             if let Ok(manga) = ani.get_manga(id).await {
-                let mut text = utils::gen_manga_info(&manga);
-                let image_url = manga.banner.unwrap_or(
-                    manga.cover.extra_large.unwrap_or(
-                        manga
-                            .cover
-                            .large
-                            .unwrap_or(manga.cover.medium.unwrap_or(String::new())),
-                    ),
-                );
-
-                if ctx.is_callback_query() && !ctx.has_photo().await {
-                    text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
-                    ctx.edit(InputMessage::html(text).link_preview(true))
-                        .await?;
-                } else {
-                    ctx.reply(InputMessage::html(text).photo_url(image_url))
-                        .await?;
-                }
+                send_manga_info(manga, ctx, &i18n).await?;
             } else {
                 ctx.reply(InputMessage::html(t("manga_not_found"))).await?;
             }
@@ -67,6 +51,13 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
             let title = args.join(" ");
 
             if let Some(result) = ani.search_manga(&title).await {
+                if result.is_empty() {
+                    ctx.reply(InputMessage::html(t("no_results"))).await?;
+                    return Ok(());
+                } else if result.len() == 1 {
+                    return send_manga_info(result[0].clone(), ctx, &i18n).await;
+                }
+
                 let buttons = result
                     .into_iter()
                     .map(|manga| {
@@ -77,11 +68,6 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                     })
                     .collect::<Vec<_>>();
 
-                if buttons.is_empty() {
-                    ctx.reply(InputMessage::html(t("no_results"))).await?;
-                    return Ok(());
-                }
-
                 ctx.reply(
                     InputMessage::html(t_a("search_results", hashmap! { "search" => title }))
                         .reply_markup(&reply_markup::inline(buttons)),
@@ -91,6 +77,30 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                 ctx.reply(InputMessage::html(t("no_results"))).await?;
             }
         }
+    }
+
+    Ok(())
+}
+
+/// Sends the manga info to the user.
+async fn send_manga_info(manga: Manga, ctx: Context, i18n: &I18n) -> Result<()> {
+    let mut text = utils::gen_manga_info(&manga, i18n);
+    let image_url = manga.banner.unwrap_or(
+        manga.cover.extra_large.unwrap_or(
+            manga
+                .cover
+                .large
+                .unwrap_or(manga.cover.medium.unwrap_or(String::new())),
+        ),
+    );
+
+    if ctx.is_callback_query() && !ctx.has_photo().await {
+        text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
+        ctx.edit(InputMessage::html(text).link_preview(true))
+            .await?;
+    } else {
+        ctx.reply(InputMessage::html(text).photo_url(image_url))
+            .await?;
     }
 
     Ok(())

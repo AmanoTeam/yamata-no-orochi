@@ -11,6 +11,7 @@
 use ferogram::{filter, handler, Context, Result, Router};
 use grammers_client::{button, reply_markup, InputMessage};
 use maplit::hashmap;
+use rust_anilist::models::User;
 
 use crate::{
     resources::{anilist::AniList, i18n::I18n},
@@ -42,18 +43,7 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     } else {
         if let Ok(id) = args[0].parse::<i32>() {
             if let Ok(user) = ani.get_user(id).await {
-                let mut text = utils::gen_user_info(&user);
-                let mut image_url = format!("https://img.anili.st/user/{}", user.id,);
-
-                if ctx.is_callback_query() && !ctx.has_photo().await {
-                    text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
-                    ctx.edit(InputMessage::html(text).link_preview(true))
-                        .await?;
-                } else {
-                    image_url.push_str(&format!("?u={}", rand::random::<u32>()));
-                    ctx.reply(InputMessage::html(text).photo_url(image_url))
-                        .await?;
-                }
+                send_user_info(&user, ctx).await?;
             } else {
                 ctx.reply(InputMessage::html(t("user_not_found"))).await?;
             }
@@ -61,15 +51,17 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
             let name = args.join(" ");
 
             if let Some(result) = ani.search_user(&name).await {
+                if result.is_empty() {
+                    ctx.reply(InputMessage::html(t("no_results"))).await?;
+                    return Ok(());
+                } else if result.len() == 1 {
+                    return send_user_info(&result[0], ctx).await;
+                }
+
                 let buttons = result
                     .into_iter()
                     .map(|user| vec![button::inline(user.name, format!("user {}", user.id))])
                     .collect::<Vec<_>>();
-
-                if buttons.is_empty() {
-                    ctx.reply(InputMessage::html(t("no_results"))).await?;
-                    return Ok(());
-                }
 
                 ctx.reply(
                     InputMessage::html(t_a("search_results", hashmap! { "search" => name }))
@@ -80,6 +72,24 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                 ctx.reply(InputMessage::html(t("no_results"))).await?;
             }
         }
+    }
+
+    Ok(())
+}
+
+/// Sends the user info to the user.
+async fn send_user_info(user: &User, ctx: Context) -> Result<()> {
+    let mut text = utils::gen_user_info(&user);
+    let mut image_url = format!("https://img.anili.st/user/{}", user.id);
+
+    if ctx.is_callback_query() && !ctx.has_photo().await {
+        text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
+        ctx.edit(InputMessage::html(text).link_preview(true))
+            .await?;
+    } else {
+        image_url.push_str(&format!("?u={}", rand::random::<u32>()));
+        ctx.reply(InputMessage::html(text).photo_url(image_url))
+            .await?;
     }
 
     Ok(())
