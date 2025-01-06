@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 /// The path to the configuration file.
 const PATH: &str = "./assets/config.toml";
 
-/// The bot configuration.
+/// The configuration.
 #[derive(Deserialize, Serialize)]
 pub struct Config {
     /// Application-related settings.

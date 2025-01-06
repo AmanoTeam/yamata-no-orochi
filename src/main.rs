@@ -40,6 +40,7 @@ fn main() -> Result<()> {
             .session_file(config.app.session_file)
             .catch_up(config.telegram.catch_up)
             .flood_sleep_threshold(config.telegram.flood_sleep_threshold)
+            .set_bot_commands()
             .on_err(|_, _, err| async move {
                 log::error!("An error occurred: {:?}", err);
             })

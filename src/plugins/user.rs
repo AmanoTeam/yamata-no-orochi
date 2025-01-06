@@ -21,7 +21,10 @@ use crate::{
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
     router
-        .handler(handler::new_message(filter::commands(&["u", "user"])).then(user))
+        .handler(
+            handler::new_message(filter::commands(&["u", "user"]).description("Search for users."))
+                .then(user),
+        )
         .handler(handler::callback_query(filter::regex(r"^user (\d+)")).then(user))
 }
 

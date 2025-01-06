@@ -8,22 +8,24 @@
 
 //! The AniList resource.
 
+use std::{sync::Arc, time::Duration};
+
 use rust_anilist::{
     models::{Anime, Manga, User},
-    Error,
+    Client, Error,
 };
 
 /// AniList module.
 #[derive(Clone)]
 pub struct AniList {
-    client: rust_anilist::Client,
+    client: Arc<rust_anilist::Client>,
 }
 
 impl AniList {
     /// Creates a new instance of the AniList resource.
     pub fn new() -> Self {
         Self {
-            client: rust_anilist::Client::default(),
+            client: Arc::new(Client::with_timeout(Duration::from_secs(15))),
         }
     }
 

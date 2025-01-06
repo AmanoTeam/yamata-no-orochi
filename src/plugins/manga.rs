@@ -21,7 +21,12 @@ use crate::{
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
     router
-        .handler(handler::new_message(filter::commands(&["m", "manga"])).then(manga))
+        .handler(
+            handler::new_message(
+                filter::commands(&["m", "manga"]).description("Search for mangas."),
+            )
+            .then(manga),
+        )
         .handler(handler::callback_query(filter::regex(r"^manga (\d+)")).then(manga))
 }
 
