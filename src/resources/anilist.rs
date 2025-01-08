@@ -73,12 +73,14 @@ impl AniList {
     /// # Arguments
     ///
     /// * `title` - The anime title.
+    /// * `page` - The page number.
+    /// * `limit` - The number of results per page.
     ///
     /// # Errors
     ///
     /// Returns an error if the anime could not be retrieved.
-    pub async fn search_anime(&self, title: &str) -> Option<Vec<Anime>> {
-        self.client.search_anime(title, 1, 6).await
+    pub async fn search_anime(&self, title: &str, page: u16, limit: u16) -> Option<Vec<Anime>> {
+        self.client.search_anime(title, page, limit).await
     }
 
     /// Searches for mangas by its title.
@@ -86,12 +88,14 @@ impl AniList {
     /// # Arguments
     ///
     /// * `title` - The manga title.
+    /// * `page` - The page number.
+    /// * `limit` - The number of results per page.
     ///
     /// # Errors
     ///
     /// Returns an error if the manga could not be retrieved.
-    pub async fn search_manga(&self, title: &str) -> Option<Vec<Manga>> {
-        self.client.search_manga(title, 1, 6).await
+    pub async fn search_manga(&self, title: &str, page: u16, limit: u16) -> Option<Vec<Manga>> {
+        self.client.search_manga(title, page, limit).await
     }
 
     /// Searches for users by its name.
@@ -99,11 +103,13 @@ impl AniList {
     /// # Arguments
     ///
     /// * `name` - The user name.
+    /// * `page` - The page number.
+    /// * `limit` - The number of results per page.
     ///
     /// # Errors
     ///
     /// Returns an error if the user could not be retrieved.
-    pub async fn search_user(&self, name: &str) -> Option<Vec<User>> {
-        self.client.search_user(name, 1, 6).await
+    pub async fn search_user(&self, name: &str, page: u16, limit: u16) -> Option<Vec<User>> {
+        self.client.search_user(name, page, limit).await
     }
 }

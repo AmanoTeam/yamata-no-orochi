@@ -10,10 +10,11 @@
 
 use ferogram::Router;
 
-pub mod anime;
-pub mod manga;
-pub mod start;
-pub mod user;
+mod anime;
+mod inline;
+mod manga;
+mod start;
+mod user;
 
 /// The plugins setup.
 pub fn setup(router: Router) -> Router {
@@ -22,4 +23,5 @@ pub fn setup(router: Router) -> Router {
         .router(anime::setup)
         .router(manga::setup)
         .router(user::setup)
+        .router(inline::setup)
 }

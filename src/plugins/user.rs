@@ -9,7 +9,11 @@
 //! The user plugin.
 
 use ferogram::{filter, handler, Context, Result, Router};
-use grammers_client::{button, reply_markup, InputMessage};
+use grammers_client::{
+    button, reply_markup,
+    types::{inline, InlineQuery},
+    InputMessage,
+};
 use maplit::hashmap;
 use rust_anilist::models::User;
 
@@ -26,6 +30,9 @@ pub fn setup(router: Router) -> Router {
                 .then(user),
         )
         .handler(handler::callback_query(filter::regex(r"^user (\d+)")).then(user))
+        .handler(
+            handler::inline_query(filter::regex(r"^[\.!]?u(s(e(r)?)?)? (.+)")).then(user_inline),
+        )
 }
 
 /// The user handler.
@@ -42,7 +49,12 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     let args = text.split_whitespace().skip(1).collect::<Vec<&str>>();
 
     if args.is_empty() {
-        ctx.reply(InputMessage::html(t("user_usage"))).await?;
+        ctx.reply(
+            InputMessage::html(t("user_usage")).reply_markup(&reply_markup::inline(vec![vec![
+                button::switch_inline(t("search_btn"), "!u "),
+            ]])),
+        )
+        .await?;
     } else {
         if let Ok(id) = args[0].parse::<i32>() {
             if let Ok(user) = ani.get_user(id).await {
@@ -53,7 +65,7 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
         } else {
             let name = args.join(" ");
 
-            if let Some(result) = ani.search_user(&name).await {
+            if let Some(result) = ani.search_user(&name, 1, 6).await {
                 if result.is_empty() {
                     ctx.reply(InputMessage::html(t("no_results"))).await?;
                     return Ok(());
@@ -82,13 +94,15 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
 
 /// Sends the user info to the user.
 async fn send_user_info(user: &User, ctx: Context) -> Result<()> {
-    let mut text = utils::gen_user_info(&user);
+    let text = utils::gen_user_info(&user);
     let mut image_url = format!("https://img.anili.st/user/{}", user.id);
 
-    if ctx.is_callback_query() && !ctx.has_photo().await {
-        text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
-        ctx.edit(InputMessage::html(text).link_preview(true))
-            .await?;
+    if ctx.is_callback_query() {
+        ctx.edit(
+            InputMessage::html(format!("<a href=\"{}\">⁠</a>", image_url) + &text)
+                .link_preview(true),
+        )
+        .await?;
     } else {
         image_url.push_str(&format!("?u={}", rand::random::<u32>()));
         ctx.reply(InputMessage::html(text).photo_url(image_url))
@@ -96,4 +110,76 @@ async fn send_user_info(user: &User, ctx: Context) -> Result<()> {
     }
 
     Ok(())
+}
+
+/// Generates an inline query article for a user.
+async fn user_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()> {
+    let t = |key: &str| i18n.translate(key);
+
+    let arg = query
+        .text()
+        .split_whitespace()
+        .skip(1)
+        .collect::<Vec<&str>>()
+        .join(" ");
+    let offset = query.offset().parse::<u16>().unwrap_or(1);
+    let mut results = Vec::new();
+
+    if let Ok(id) = arg.parse::<i32>() {
+        if let Ok(user) = ani.get_user(id).await {
+            let article = gen_user_article(user);
+            results.push(article.into());
+        }
+    } else {
+        if let Some(result) = ani.search_user(&arg, offset, 10).await {
+            for user in result {
+                let article = gen_user_article(user);
+                results.push(article.into());
+            }
+        }
+    }
+
+    if results.is_empty() {
+        if offset == 1 {
+            results.push(
+                inline::query::Article::new(t("no_results"), InputMessage::html(t("no_results")))
+                    .into(),
+            );
+        } else {
+            results.push(
+                inline::query::Article::new(
+                    t("no_more_results"),
+                    InputMessage::html(t("no_more_results")),
+                )
+                .into(),
+            );
+        }
+    }
+
+    query
+        .answer(results)
+        .cache_time(120)
+        .next_offset((offset + 1).to_string())
+        .send()
+        .await?;
+
+    Ok(())
+}
+
+/// Generates an inline query article for a user.
+fn gen_user_article(user: User) -> inline::query::Article {
+    let text = utils::gen_user_info(&user);
+    let image_url = format!("https://img.anili.st/user/{}", user.id);
+
+    let mut article = inline::query::Article::new(
+        user.name.clone(),
+        InputMessage::html(format!("<a href=\"{}\">⁠</a>", image_url) + &text).link_preview(true),
+    );
+
+    let image_url = user.banner.or(user.avatar.map(|a| a.largest().to_string()));
+    if let Some(image_url) = image_url {
+        article = article.thumb_url(image_url);
+    }
+
+    article
 }

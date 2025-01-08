@@ -9,13 +9,17 @@
 //! The manga plugin.
 
 use ferogram::{filter, handler, Context, Result, Router};
-use grammers_client::{button, reply_markup, InputMessage};
+use grammers_client::{
+    button, reply_markup,
+    types::{inline, InlineQuery},
+    InputMessage,
+};
 use maplit::hashmap;
 use rust_anilist::models::Manga;
 
 use crate::{
     resources::{anilist::AniList, i18n::I18n},
-    utils,
+    utils::{self, remove_html, shorten_text},
 };
 
 /// The plugin setup.
@@ -28,6 +32,10 @@ pub fn setup(router: Router) -> Router {
             .then(manga),
         )
         .handler(handler::callback_query(filter::regex(r"^manga (\d+)")).then(manga))
+        .handler(
+            handler::inline_query(filter::regex(r"^[\.!]?m(a(n(g(a)?)?)?)? (.+)"))
+                .then(manga_inline),
+        )
 }
 
 /// The manga command handler.
@@ -44,7 +52,12 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     let args = text.split_whitespace().skip(1).collect::<Vec<&str>>();
 
     if args.is_empty() {
-        ctx.reply(InputMessage::html(t("manga_usage"))).await?;
+        ctx.reply(
+            InputMessage::html(t("manga_usage")).reply_markup(&reply_markup::inline(vec![vec![
+                button::switch_inline(t("search_btn"), "!m "),
+            ]])),
+        )
+        .await?;
     } else {
         if let Ok(id) = args[0].parse::<i64>() {
             if let Ok(manga) = ani.get_manga(id).await {
@@ -55,7 +68,7 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
         } else {
             let title = args.join(" ");
 
-            if let Some(result) = ani.search_manga(&title).await {
+            if let Some(result) = ani.search_manga(&title, 1, 6).await {
                 if result.is_empty() {
                     ctx.reply(InputMessage::html(t("no_results"))).await?;
                     return Ok(());
@@ -90,23 +103,102 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
 /// Sends the manga info to the user.
 async fn send_manga_info(manga: Manga, ctx: Context, i18n: &I18n) -> Result<()> {
     let mut text = utils::gen_manga_info(&manga, i18n);
-    let image_url = manga.banner.unwrap_or(
-        manga.cover.extra_large.unwrap_or(
-            manga
-                .cover
-                .large
-                .unwrap_or(manga.cover.medium.unwrap_or(String::new())),
-        ),
-    );
+    let image_url = manga.banner.or(manga.cover.largest().map(String::from));
 
-    if ctx.is_callback_query() && !ctx.has_photo().await {
-        text.push_str(&format!("<a href='{}'>ㅤ</a>", image_url));
+    if ctx.is_callback_query() {
+        if let Some(image_url) = image_url.as_ref() {
+            text = format!("<a href=\"{}\">⁠</a>", image_url) + &text;
+        }
+
         ctx.edit(InputMessage::html(text).link_preview(true))
             .await?;
     } else {
-        ctx.reply(InputMessage::html(text).photo_url(image_url))
+        ctx.reply(InputMessage::html(text).photo_url(image_url.unwrap_or_default()))
             .await?;
     }
 
     Ok(())
+}
+
+/// The manga inline query handler.
+async fn manga_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()> {
+    let t = |key: &str| i18n.translate(key);
+
+    let arg = query
+        .text()
+        .split_whitespace()
+        .skip(1)
+        .collect::<Vec<&str>>()
+        .join(" ");
+    let offset = query.offset().parse::<u16>().unwrap_or(1);
+    let mut results = Vec::new();
+
+    if let Ok(id) = arg.parse::<i64>() {
+        if let Ok(manga) = ani.get_manga(id).await {
+            let article = gen_manga_article(manga, &i18n);
+            results.push(article.into());
+        }
+    } else {
+        if let Some(result) = ani.search_manga(&arg, offset, 10).await {
+            for manga in result {
+                let article = gen_manga_article(manga, &i18n);
+                results.push(article.into());
+            }
+        }
+    }
+
+    if results.is_empty() {
+        if offset == 1 {
+            results.push(
+                inline::query::Article::new(t("no_results"), InputMessage::html(t("no_results")))
+                    .into(),
+            );
+        } else {
+            results.push(
+                inline::query::Article::new(
+                    t("no_more_results"),
+                    InputMessage::html(t("no_more_results")),
+                )
+                .into(),
+            );
+        }
+    }
+
+    query
+        .answer(results)
+        .cache_time(120)
+        .next_offset((offset + 1).to_string())
+        .send()
+        .await?;
+
+    Ok(())
+}
+
+/// Generates an inline query article for a manga.
+fn gen_manga_article(manga: Manga, i18n: &I18n) -> inline::query::Article {
+    let t = |key: &str| i18n.translate(key);
+
+    let mut text = utils::gen_manga_info(&manga, &i18n);
+    let image_url = manga.banner.or(manga.cover.largest().map(String::from));
+
+    if let Some(image_url) = image_url.as_ref() {
+        text = format!("<a href=\"{}\">⁠</a>", image_url) + &text;
+    }
+
+    let mut article = inline::query::Article::new(
+        manga.title.romaji(),
+        InputMessage::html(text)
+            .reply_markup(&reply_markup::inline(vec![vec![button::inline(
+                t("load_more_btn"),
+                format!("manga {}", manga.id),
+            )]]))
+            .link_preview(true),
+    )
+    .description(shorten_text(remove_html(manga.description), 150));
+
+    if let Some(image_url) = image_url {
+        article = article.thumb_url(image_url);
+    }
+
+    article
 }

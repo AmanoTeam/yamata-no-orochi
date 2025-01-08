@@ -404,6 +404,7 @@ dependencies = [
  "regex",
  "rpassword",
  "tokio",
+ "url",
 ]
 
 [[package]]

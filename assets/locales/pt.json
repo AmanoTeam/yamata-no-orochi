@@ -9,17 +9,24 @@
     "end_date": "Data de Término",
     "start_date": "Data de Início",
 
+    "search_btn": "➕ Pesquisar",
+    "load_more_btn": "➕ Carregar mais",
+
     "start": "<b>Olá</b>! Eu sou o <s>Yamata no Orochi</s>, um bot que usa a <a href='https://docs.anilist.co/'>AniList API</a> para pesquisar por anime e manga.",
 
     "no_results": "Nenhum resultado encontrado.",
     "search_results": "Resultados para <b>${search}</b>:",
+    "no_more_results": "Não há mais resultados para exibir.",
 
-    "anime_usage": "Use <code>/anime &lt;id/nome&gt;</code> para pesquisar por anime.",
+    "anime_usage": "Utilize o comando seguido de um <b>id</b> ou <b>título</b>.\n\n<b>Exemplos:</b>\n• <code>/anime 123456</code>\n• <code>/anime Naruto</code>\n\nVocê também pode utilizar o modo <i>inline</i> usando o prefixo <code>!a</code> ou o botão abaixo.",
     "anime_not_found": "Anime não encontrado.",
 
-    "manga_usage": "Use <code>/manga &lt;id/nome&gt;</code> para pesquisar por manga.",
+    "manga_usage": "Utilize o comando seguido de um <b>id</b> ou <b>título</b>.\n\n<b>Exemplos:</b>\n• <code>/manga 123456</code>\n• <code>/manga One Piece</code>\n\nVocê também pode utilizar o modo <i>inline</i> usando o prefixo <code>!m</code> ou o botão abaixo.",
     "manga_not_found": "Manga não encontrado.",
 
-    "user_usage": "Use <code>/user &lt;id&gt;</code> para pesquisar por usuário.",
-    "user_not_found": "Usuário não encontrado."
+    "user_usage": "Utilize o comando seguido de um <b>id</b> ou <b>nome</b> de usuário.\n\n<b>Exemplos:</b>\n• <code>/user 123456</code>\n• <code>/user Yonorochi</code>\n\nVocê também pode utilizar o modo <i>inline</i> usando o prefixo <code>!u</code> ou o botão abaixo.",
+    "user_not_found": "Usuário não encontrado.",
+
+    "how_to_use_inline": "Como usar o modo inline?",
+    "how_to_use_inline_text": "<b>Como usar o modo inline?</b>\nFazendo o uso de um dos prefixos abaixo seguido de seu <b>id</b> ou <b>nome/título</b>.\n\n<b>Prefixos</b>:\n• <code>!a</code> para anime\n• <code>!m</code> para manga\n• <code>!u</code> para usuário\n\n<b>Exemplos:</b>\n• <code>@YonorochiBot !a Naruto</code>\n• <code>@YonorochiBot !m One Piece</code>\n• <code>@YonorochiBot !u 123456</code>"
 }

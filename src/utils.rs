@@ -35,6 +35,37 @@ pub fn escape_html(text: impl Into<String>) -> String {
         .replace("/", "&#x2F;")
 }
 
+/// Removes specific HTML tags from the given text.
+///
+/// This function takes a string input and removes the following HTML tags and chars:
+/// `<p>`, `</p>`, `<br>`, `<br/>`, `<br />`, `<em>`, `</em>`, `<li>`, `</li>`, `<ol>`, `</ol>`,
+/// `<ul>`, `</ul>`, `<`, `>`, `&quot;`, `&#x27;`, `&#x2F;`.
+///
+/// # Arguments
+///
+/// * `text` - A value that can be converted into a `String`.
+pub fn remove_html(text: impl Into<String>) -> String {
+    text.into()
+        .replace("<p>", "")
+        .replace("</p>", "")
+        .replace("<br>", "")
+        .replace("<br/>", "")
+        .replace("<br />", "")
+        .replace("<em>", "")
+        .replace("</em>", "")
+        .replace("<li>", "• ")
+        .replace("</li>", "")
+        .replace("<ol>", "")
+        .replace("</ol>", "")
+        .replace("<ul>", "")
+        .replace("</ul>", "")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("&quot;", "\"")
+        .replace("&#x27;", "'")
+        .replace("&#x2F;", "/")
+}
+
 /// Shortens a given text to a specified maximum length, appending "..." if truncated.
 ///
 /// # Arguments
@@ -46,7 +77,7 @@ pub fn shorten_text<T: ToString>(text: T, mut max_length: usize) -> String {
     max_length -= 3;
 
     if text.len() > max_length {
-        format!("{}...", &text[..max_length])
+        format!("{}...", text.chars().take(max_length).collect::<String>())
     } else {
         text.to_string()
     }
@@ -112,24 +143,30 @@ pub fn gen_anime_info(anime: &Anime, i18n: &I18n) -> String {
     }
 
     if let Some(date) = anime.start_date.as_ref() {
-        text.push_str(&format!(
-            "📅 | <b>{0}</b>: <i>{1}</i>\n",
-            t("start_date"),
-            date.format("{dd}/{mm}/{yyyy}")
-        ));
+        if date.is_valid() {
+            text.push_str(&format!(
+                "📅 | <b>{0}</b>: <i>{1}</i>\n",
+                t("start_date"),
+                date.format("{dd}/{mm}/{yyyy}")
+            ));
+        }
     }
     if let Some(date) = anime.end_date.as_ref() {
-        text.push_str(&format!(
-            "📆 | <b>{0}</b>: <i>{1}</i>\n",
-            t("end_date"),
-            date.format("{dd}/{mm}/{yyyy}")
-        ));
+        if date.is_valid() {
+            text.push_str(&format!(
+                "📆 | <b>{0}</b>: <i>{1}</i>\n",
+                t("end_date"),
+                date.format("{dd}/{mm}/{yyyy}")
+            ));
+        }
     }
 
-    text.push_str(&format!(
-        "\n<blockquote><i>{}</i></blockquote>\n",
-        shorten_text(&anime.description, 500).as_str()
-    ));
+    if !anime.description.is_empty() {
+        text.push_str(&format!(
+            "\n<blockquote><i>{}</i></blockquote>\n",
+            shorten_text(remove_html(&anime.description), 500).as_str()
+        ));
+    }
 
     text.push_str(&format!("\n🔗 | <a href=\"{}\">AniList</a>", anime.url));
     if let Some(id) = anime.id_mal {
@@ -157,11 +194,13 @@ pub fn gen_manga_info(manga: &Manga, i18n: &I18n) -> String {
         manga.title.romaji(),
     );
 
-    text.push_str(&format!(
-        "🌟 | <b>{0}</b>: <i>{1}</i>\n",
-        t("score"),
-        manga.average_score.unwrap_or(0)
-    ));
+    if let Some(average_score) = manga.average_score {
+        text.push_str(&format!(
+            "🌟 | <b>{0}</b>: <i>{1:02}%</i>\n",
+            t("score"),
+            average_score
+        ));
+    }
 
     text.push_str(&format!(
         "{0} | <b>{1}</b>: <i>{2}</i>\n",
@@ -221,24 +260,30 @@ pub fn gen_manga_info(manga: &Manga, i18n: &I18n) -> String {
     }
 
     if let Some(date) = manga.start_date.as_ref() {
-        text.push_str(&format!(
-            "📅 | <b>{0}</b>: <i>{1}</i>\n",
-            t("start_date"),
-            date.format("{dd}/{mm}/{yyyy}")
-        ));
+        if date.is_valid() {
+            text.push_str(&format!(
+                "📅 | <b>{0}</b>: <i>{1}</i>\n",
+                t("start_date"),
+                date.format("{dd}/{mm}/{yyyy}")
+            ));
+        }
     }
     if let Some(date) = manga.end_date.as_ref() {
-        text.push_str(&format!(
-            "📆 | <b>{0}</b>: <i>{1}</i>\n",
-            t("end_date"),
-            date.format("{dd}/{mm}/{yyyy}")
-        ));
+        if date.is_valid() {
+            text.push_str(&format!(
+                "📆 | <b>{0}</b>: <i>{1}</i>\n",
+                t("end_date"),
+                date.format("{dd}/{mm}/{yyyy}")
+            ));
+        }
     }
 
-    text.push_str(&format!(
-        "\n<blockquote><i>{}</i></blockquote>\n",
-        shorten_text(&manga.description, 300).as_str()
-    ));
+    if !manga.description.is_empty() {
+        text.push_str(&format!(
+            "\n<blockquote><i>{}</i></blockquote>\n",
+            shorten_text(remove_html(&manga.description), 350).as_str()
+        ));
+    }
 
     text.push_str(&format!("\n🔗 | <a href=\"{}\">AniList</a>", manga.url));
     if let Some(id) = manga.id_mal {
