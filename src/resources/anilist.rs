@@ -22,8 +22,12 @@ use super::cache::Cache;
 pub struct AniList {
     /// The AniList client.
     client: Arc<rust_anilist::Client>,
-    /// The cache.
-    cache: Arc<Cache<i64, Cached>>,
+    /// The cache for anime.
+    cache_anime: Arc<Cache<i64, Anime>>,
+    /// The cache for manga.
+    cache_manga: Arc<Cache<i64, Manga>>,
+    /// The cache for users.
+    cache_user: Arc<Cache<i32, User>>,
 }
 
 impl AniList {
@@ -31,7 +35,9 @@ impl AniList {
     pub fn new() -> Self {
         Self {
             client: Arc::new(Client::with_timeout(Duration::from_secs(15))),
-            cache: Arc::new(Cache::new()),
+            cache_anime: Arc::new(Cache::new()),
+            cache_manga: Arc::new(Cache::new()),
+            cache_user: Arc::new(Cache::new()),
         }
     }
 
@@ -45,11 +51,11 @@ impl AniList {
     ///
     /// Returns an error if the anime could not be retrieved.
     pub async fn get_anime(&self, id: i64) -> Result<Anime, Error> {
-        if let Some(Cached::Anime(anime)) = self.cache.get(&id).await {
+        if let Some(anime) = self.cache_anime.get(&id) {
             Ok(anime)
         } else {
             if let Ok(anime) = self.client.get_anime(id).await {
-                self.cache.insert(id, Cached::Anime(anime.clone())).await;
+                self.cache_anime.insert(id, anime.clone()).await;
 
                 Ok(anime)
             } else {
@@ -68,11 +74,11 @@ impl AniList {
     ///
     /// Returns an error if the manga could not be retrieved.
     pub async fn get_manga(&self, id: i64) -> Result<Manga, Error> {
-        if let Some(Cached::Manga(manga)) = self.cache.get(&id).await {
+        if let Some(manga) = self.cache_manga.get(&id) {
             Ok(manga)
         } else {
             if let Ok(manga) = self.client.get_manga(id).await {
-                self.cache.insert(id, Cached::Manga(manga.clone())).await;
+                self.cache_manga.insert(id, manga.clone()).await;
 
                 Ok(manga)
             } else {
@@ -91,13 +97,12 @@ impl AniList {
     ///
     /// Returns an error if the user could not be retrieved.
     pub async fn get_user(&self, id: i32) -> Result<User, Error> {
-        if let Some(Cached::User(user)) = self.cache.get(&(id as i64)).await {
+        if let Some(user) = self.cache_user.get(&id) {
             Ok(user)
         } else {
             if let Ok(user) = self.client.get_user(id).await {
-                self.cache
-                    .insert(id as i64, Cached::User(user.clone()))
-                    .await;
+                self.cache_user.insert(id, user.clone()).await;
+
                 Ok(user)
             } else {
                 Err(Error::InvalidId)
@@ -149,15 +154,4 @@ impl AniList {
     pub async fn search_user(&self, name: &str, page: u16, limit: u16) -> Option<Vec<User>> {
         self.client.search_user(name, page, limit).await
     }
-}
-
-/// A cached value.
-#[derive(Clone)]
-pub enum Cached {
-    /// An anime.
-    Anime(Anime),
-    /// A manga.
-    Manga(Manga),
-    /// An user
-    User(User),
 }
