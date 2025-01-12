@@ -8,7 +8,8 @@
 
 //! Utility functions.
 
-use rust_anilist::models::{Anime, Format, Manga, Status, User};
+use grammers_client::button::{self, Inline};
+use rust_anilist::models::{Anime, Character, Format, Gender, Manga, Status, User};
 
 use crate::resources::i18n::I18n;
 
@@ -38,14 +39,16 @@ pub fn escape_html(text: impl Into<String>) -> String {
 /// Removes specific HTML tags from the given text.
 ///
 /// This function takes a string input and removes the following HTML tags and chars:
-/// `<p>`, `</p>`, `<br>`, `<br/>`, `<br />`, `<em>`, `</em>`, `<li>`, `</li>`, `<ol>`, `</ol>`,
-/// `<ul>`, `</ul>`, `<`, `>`, `&quot;`, `&#x27;`, `&#x2F;`.
+/// `<i>`, `</i>`, `<p>`, `</p>`, `<br>`, `<br/>`, `<br />`, `<em>`, `</em>`, `<li>`, `</li>`,
+/// `<ol>`, `</ol>`, `<ul>`, `</ul>`, `<`, `>`, `&quot;`, `&#x27;`, `&#x2F;`.
 ///
 /// # Arguments
 ///
 /// * `text` - A value that can be converted into a `String`.
 pub fn remove_html(text: impl Into<String>) -> String {
     text.into()
+        .replace("<i>", "")
+        .replace("</i>", "")
         .replace("<p>", "")
         .replace("</p>", "")
         .replace("<br>", "")
@@ -317,4 +320,68 @@ pub fn gen_user_info(user: &User) -> String {
     ));
 
     text
+}
+
+/// Generates a list of characters with pagination and internationalization support.
+///
+/// # Arguments
+///
+/// * `characters` - A slice of `Character` structs to be displayed.
+/// * `page` - The current page number for pagination.
+/// * `per_page` - The number of characters per page.
+/// * `i18n` - A reference to the `I18n` struct for internationalization.
+pub fn gen_char_list(
+    characters: &[Character],
+    page: usize,
+    per_page: usize,
+    i18n: &I18n,
+) -> String {
+    let t = |key: &str| i18n.translate(key);
+
+    let mut text = format!("👥 <b>{}</b>:\n", t("characters"));
+
+    let offset = (page - 1) * per_page;
+
+    for character in characters.iter().skip(offset).take(per_page) {
+        text.push_str(&format!(
+            "{0} | <code>{1}</code>. <b>{2}</b>\n",
+            match character.gender.clone().unwrap_or_default() {
+                Gender::Male => "👨",
+                Gender::Female => "👩",
+                Gender::NonBinary => "👨‍👧‍👦",
+                Gender::Other(_) => "👨‍👩‍👧‍👦",
+            },
+            character.id,
+            character.name.full()
+        ));
+
+        if let Some(role) = character.role.as_ref() {
+            text.push_str(&format!("🎭 | <i>{}</i>\n", role));
+        }
+    }
+
+    text
+}
+
+pub fn gen_pagination_buttons(callback: &str, page: usize, max_pages: usize) -> Vec<Inline> {
+    let mut buttons = Vec::new();
+
+    for i in 1..=max_pages {
+        if (page > 1 && i < (page - 2)) || i > (page + 2) {
+            continue;
+        }
+
+        buttons.push(button::inline(
+            if i < page {
+                format!("⬅️ {0}", i)
+            } else if i > page {
+                format!("{0} ➡️", i)
+            } else {
+                format!("· {0} ·", i)
+            },
+            format!("{0} {1}", callback, i),
+        ));
+    }
+
+    buttons
 }

@@ -120,7 +120,7 @@ async fn user_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()>
         .text()
         .split_whitespace()
         .skip(1)
-        .collect::<Vec<&str>>()
+        .collect::<Vec<_>>()
         .join(" ");
     let offset = query.offset().parse::<u16>().unwrap_or(1);
     let mut results = Vec::new();
