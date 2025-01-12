@@ -9,4 +9,5 @@
 //! Resources.
 
 pub mod anilist;
+pub mod cache;
 pub mod i18n;
