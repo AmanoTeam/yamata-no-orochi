@@ -393,6 +393,7 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 [[package]]
 name = "ferogram"
 version = "0.1.2"
+source = "git+https://github.com/AmanoTeam/ferogram.git#2b3159114ad2927a4b40db7416e7a55d28c313b5"
 dependencies = [
  "async-recursion",
  "async-trait",
@@ -410,6 +411,7 @@ dependencies = [
 [[package]]
 name = "ferogram-macros"
 version = "0.1.0"
+source = "git+https://github.com/AmanoTeam/ferogram.git#2b3159114ad2927a4b40db7416e7a55d28c313b5"
 
 [[package]]
 name = "flate2"
@@ -1641,6 +1643,7 @@ dependencies = [
 [[package]]
 name = "rust-anilist"
 version = "0.1.5"
+source = "git+https://github.com/AmanoTeam/rust-anilist.git#9e74055d508f35395774357d323966791dbc0945"
 dependencies = [
  "chrono",
  "reqwest",
