@@ -188,11 +188,11 @@ fn gen_manga_article(manga: Manga, i18n: &I18n) -> inline::query::Article {
     let mut article = inline::query::Article::new(
         manga.title.romaji(),
         InputMessage::html(text)
+            .link_preview(true)
             .reply_markup(&reply_markup::inline(vec![vec![button::inline(
                 t("load_more_btn"),
                 format!("manga {}", manga.id),
-            )]]))
-            .link_preview(true),
+            )]])),
     )
     .description(shorten_text(remove_html(manga.description), 150));
 

@@ -35,9 +35,9 @@ impl AniList {
     pub fn new() -> Self {
         Self {
             client: Arc::new(Client::with_timeout(Duration::from_secs(15))),
-            cache_anime: Arc::new(Cache::new()),
-            cache_manga: Arc::new(Cache::new()),
-            cache_user: Arc::new(Cache::new()),
+            cache_anime: Arc::new(Cache::with(30)),
+            cache_manga: Arc::new(Cache::with(30)),
+            cache_user: Arc::new(Cache::with(30)),
         }
     }
 

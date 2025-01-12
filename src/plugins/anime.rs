@@ -40,7 +40,7 @@ pub fn setup(router: Router) -> Router {
             )
             .then(anime),
         )
-        .handler(handler::callback_query(filter::regex(r"^anime (\d+)")).then(anime))
+        .handler(handler::callback_query(filter::regex(r"^anime (\d+) (\d+)")).then(anime))
         .handler(
             handler::callback_query(filter::regex(r"^anime (studios|synonyms|episodes|next_airing|staff|chars|tags|links) (\d+) (\d+)")).then(anime_info)
         )
@@ -572,11 +572,11 @@ fn gen_anime_article(query: &InlineQuery, anime: Anime, i18n: &I18n) -> inline::
             anime.title.romaji().to_string()
         },
         InputMessage::html(format!("<a href=\"{}\">⁠</a>", image_url) + &text)
+            .link_preview(true)
             .reply_markup(&reply_markup::inline(vec![vec![button::inline(
                 t("load_more_btn"),
                 format!("anime {0} {1}", anime.id, sender.id()),
-            )]]))
-            .link_preview(true),
+            )]])),
     )
     .description(shorten_text(remove_html(anime.description), 150));
 
