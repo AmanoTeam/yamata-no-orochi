@@ -40,7 +40,7 @@ pub fn escape_html(text: impl Into<String>) -> String {
 ///
 /// This function takes a string input and removes the following HTML tags and chars:
 /// `<i>`, `</i>`, `<p>`, `</p>`, `<br>`, `<br/>`, `<br />`, `<em>`, `</em>`, `<li>`, `</li>`,
-/// `<ol>`, `</ol>`, `<ul>`, `</ul>`, `<`, `>`, `&quot;`, `&#x27;`, `&#x2F;`.
+/// `<ol>`, `</ol>`, `<ul>`, `</ul>`, `<center>`, `</center>` `<`, `>`, `&quot;`, `&#x27;`, `&#x2F;`.
 ///
 /// # Arguments
 ///
@@ -62,6 +62,8 @@ pub fn remove_html(text: impl Into<String>) -> String {
         .replace("</ol>", "")
         .replace("<ul>", "")
         .replace("</ul>", "")
+        .replace("<center>", "")
+        .replace("</center>", "")
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace("&quot;", "\"")
@@ -310,7 +312,7 @@ pub fn gen_user_info(user: &User) -> String {
     if let Some(about) = user.about.as_ref() {
         text.push_str(&format!(
             "\n<blockquote>{}</blockquote>\n",
-            shorten_text(about, 250).as_str()
+            shorten_text(remove_html(about), 250)
         ));
     }
 
