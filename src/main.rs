@@ -14,6 +14,7 @@ mod resources;
 pub mod utils;
 
 use ferogram::{Client, Injector, Result};
+use grammers_client::{types::inline, InputMessage, Update};
 use resources::{anilist::AniList, i18n::I18n};
 
 fn main() -> Result<()> {
@@ -41,8 +42,44 @@ fn main() -> Result<()> {
             .catch_up(config.telegram.catch_up)
             .flood_sleep_threshold(config.telegram.flood_sleep_threshold)
             .set_bot_commands()
-            .on_err(|_, _, err| async move {
+            .on_err(|_, update, err| async move {
+                match update {
+                    Update::NewMessage(message) | Update::MessageEdited(message) => {
+                        message
+                            .reply(InputMessage::text(format!(
+                                "Ocorreu um erro enquanto processávamos sua mensagem:\n<blockquote>{}</blockquote>\n\nReporte em @Yonorochi.",
+                                err
+                            )))
+                            .await?;
+                    }
+                    Update::CallbackQuery(query) => {
+                        query
+                            .answer()
+                            .alert(format!(
+                                "Ocorreu um erro enquanto processávamos sua solicitação:\n{}\n\nReporte em @Yonorochi.",
+                                err
+                            ))
+                            .send()
+                            .await?;
+                    }
+                    Update::InlineQuery(query) => {
+                        query
+                            .answer(vec![inline::query::Article::new("Erro", InputMessage::html(format!(
+                                "Ocorreu um erro enquanto processávamos sua solicitação:\n<blockquote>{}</blockquote>\n\nReporte em @Yonorochi.",
+                                err
+                            ))).description("Ocorreu um erro enquanto processávamos sua solicitação.").into()])
+                            .switch_pm("Reportar erro", "error_report")
+                            .send()
+                            .await?;
+                    }
+                    _ => {
+                        log::debug!("A update error was not handled: {0}\n{1:?}", err, update);
+                    },
+                };
+
                 log::error!("An error occurred: {:?}", err);
+
+                Ok(())
             })
             .wait_for_ctrl_c()
             .build_and_connect()
