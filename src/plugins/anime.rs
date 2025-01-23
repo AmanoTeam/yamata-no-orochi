@@ -42,7 +42,10 @@ pub fn setup(router: Router) -> Router {
         )
         .handler(handler::callback_query(filter::regex(r"^anime (\d+) (\d+)")).then(anime))
         .handler(
-            handler::callback_query(filter::regex(r"^anime (studios|synonyms|episodes|next_airing|staff|chars|tags|links) (\d+) (\d+)")).then(anime_info)
+            handler::callback_query(filter::regex(
+                r"^anime (studios|synonyms|episodes|staff|chars|tags|links) (\d+) (\d+)",
+            ))
+            .then(anime_info),
         )
         .handler(
             handler::inline_query(filter::regex(r"^[\.!]?a(n(i(m(e)?)?)?)? (.+)"))
@@ -160,13 +163,6 @@ async fn send_anime_info(anime: Anime, ctx: Context, i18n: &I18n) -> Result<()> 
         buttons.push(button::inline(
             t("episodes_btn"),
             format!("anime episodes {0} {1}", anime.id, sender.id()),
-        ));
-    }
-
-    if anime.next_airing_episode.is_some() {
-        buttons.push(button::inline(
-            t("next_airing_btn"),
-            format!("anime next_airing {0} {1}", anime.id, sender.id()),
         ));
     }
 

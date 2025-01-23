@@ -10,11 +10,8 @@
     "volumes": "Volumes",
     "chapters": "Capítulos",
     "episodes": "Episódios",
-    "end_date": "Data de Término",
     "characters": "Personagens",
     "time_until": "Tempo restante",
-    "start_date": "Data de Início",
-    "next_airing": "Próximo lançamento",
 
     "back_btn": "⬅️ Voltar",
     "next_btn": "Próximo ➡️",
@@ -29,8 +26,6 @@
     "synonyms_btn": "🔎 Sinônimos",
     "load_more_btn": "➕ Carregar mais",
     "characters_btn": "👥 Personagens",
-    "next_airing_btn": "🔁 Próximo lançamento",
-    "full_description_btn": "ℹ Descrição",
 
     "start": "<b>Olá</b>! Eu sou o <s>Yamata no Orochi</s>, um bot que usa a <a href='https://docs.anilist.co/'>AniList API</a> para pesquisar por anime e manga.",
 
