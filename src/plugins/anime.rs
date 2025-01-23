@@ -184,7 +184,7 @@ async fn send_anime_info(anime: Anime, ctx: Context, i18n: &I18n) -> Result<()> 
         ));
     }
 
-    if anime.tags.is_some() {
+    if anime.tags.as_ref().is_some_and(|tags| !tags.is_empty()) {
         buttons.push(button::inline(
             t("tags_btn"),
             format!("anime tags {0} {1}", anime.id, sender.id()),
@@ -420,7 +420,7 @@ async fn anime_info(query: CallbackQuery, i18n: I18n, ani: AniList) -> Result<()
                     .await?;
             }
             "tags" => {
-                if let Some(tags) = anime.tags.as_mut() {
+                if let Some(tags) = anime.tags.as_mut().take_if(|tags| !tags.is_empty()) {
                     let tags = tags
                         .iter()
                         .map(|tag| {
