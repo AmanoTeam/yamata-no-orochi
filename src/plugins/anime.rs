@@ -10,7 +10,6 @@
 
 use std::time::Duration;
 
-use chrono::DateTime;
 use ferogram::{
     filter, handler,
     utils::{bytes_to_string, split_btns_into_columns},
@@ -111,11 +110,8 @@ async fn anime(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                     .into_iter()
                     .map(|anime| {
                         vec![button::inline(
-                            if anime.is_adult {
-                                format!("🔞 {}", anime.title.romaji())
-                            } else {
-                                anime.title.romaji().to_string()
-                            },
+                            if anime.is_adult { "🔞 " } else { "" }.to_string()
+                                + &anime.title.romaji(),
                             format!("anime {0} {1}", anime.id, sender.id()),
                         )]
                     })
@@ -212,13 +208,13 @@ async fn send_anime_info(anime: Anime, ctx: Context, i18n: &I18n) -> Result<()> 
         if let Some(prequel) = prequel {
             relations_buttons.push(button::inline(
                 t("previous_btn"),
-                format!("anime {} {}", prequel.media().id(), sender.id()),
+                format!("anime {0} {1}", prequel.media().id(), sender.id()),
             ));
         }
         if let Some(sequel) = sequel {
             relations_buttons.push(button::inline(
                 t("next_btn"),
-                format!("anime {} {}", sequel.media().id(), sender.id()),
+                format!("anime {0} {1}", sequel.media().id(), sender.id()),
             ));
         }
 
@@ -278,7 +274,7 @@ async fn anime_info(query: CallbackQuery, i18n: I18n, ani: AniList) -> Result<()
 
     if let Ok(mut anime) = ani.get_anime(anime_id).await {
         let mut text = format!(
-            "↓ <code>{0}</code> → <b>{1}</b>\n\n",
+            "<code>{0}</code> | <b>{1}</b>\n\n",
             anime.id,
             anime.title.romaji()
         );
@@ -318,66 +314,6 @@ async fn anime_info(query: CallbackQuery, i18n: I18n, ani: AniList) -> Result<()
                 }
             }
             "episodes" => {}
-            "next_airing" => {
-                if let Some(next_airing) = anime.next_airing_episode.as_ref() {
-                    let at =
-                        DateTime::from_timestamp(next_airing.at, 0).expect("invalid timestamp");
-                    let time_until = {
-                        let mut text = String::new();
-                        let time = Duration::from_secs(next_airing.time_until);
-
-                        // Days
-                        if time.as_secs() >= 86400 {
-                            text.push_str(&format!("{}d, ", time.as_secs() / 86400));
-                        }
-
-                        // Hours
-                        if time.as_secs() >= 3600 {
-                            text.push_str(&format!("{}h, ", (time.as_secs() % 86400) / 3600));
-                        }
-
-                        // Minutes
-                        if time.as_secs() >= 60 {
-                            text.push_str(&format!("{}m and ", (time.as_secs() % 3600) / 60));
-                        }
-
-                        // Seconds
-                        if time.as_secs() >= 1 {
-                            text.push_str(&format!("{}s", time.as_secs() % 60));
-                        }
-
-                        text
-                    };
-
-                    text.push_str(&format!(
-                        "🔁 <b>{0}</b>:\n📺 | <b>EP</b>: <i>{1:02}</i>\n📅 | <b>{2}</b>: <i>{3}</i>\n📆 | <b>{4}</b>: <i>{5}</i>",
-                        t("next_airing"),
-                        next_airing.episode,
-                        t("date"),
-                        at.format("%d/%m/%Y %H:%M:%S"),
-                        t("time_until"),
-                        time_until,
-                    ));
-
-                    query
-                        .answer()
-                        .edit(
-                            InputMessage::html(text).reply_markup(&reply_markup::inline(vec![
-                                vec![button::inline(
-                                    t("reload_btn"),
-                                    format!("anime next_airing {0} {1}", anime_id, sender_id),
-                                )],
-                                vec![button::inline(
-                                    t("back_btn"),
-                                    format!("anime {0} {1}", anime_id, sender_id),
-                                )],
-                            ])),
-                        )
-                        .await?;
-                } else {
-                    query.answer().alert(t("not_available")).send().await?;
-                }
-            }
             "staff" => {}
             "chars" => {
                 let page = args
