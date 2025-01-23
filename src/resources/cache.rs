@@ -18,7 +18,7 @@ pub struct Cache<K, V> {
     /// The underlying map storing the cached values.
     map: Arc<RwLock<HashMap<K, V>>>,
     /// The maximum size of the cache.
-    max_size: usize,
+    capacity: usize,
 }
 
 #[allow(dead_code)]
@@ -31,11 +31,11 @@ where
     ///
     /// # Arguments
     ///
-    /// * `max_size` - The maximum size of the cache.
-    pub fn with(max_size: usize) -> Self {
+    /// * `capacity` - The max size of the cache.
+    pub fn with_capacity(capacity: usize) -> Self {
         Self {
             map: Arc::new(RwLock::new(HashMap::new())),
-            max_size,
+            capacity,
         }
     }
 
@@ -58,7 +58,7 @@ where
     pub async fn insert(&self, key: K, value: V) {
         let mut map = self.map.write().await;
 
-        if map.len() >= self.max_size {
+        if map.len() >= self.capacity {
             map.clear();
         }
 
