@@ -128,31 +128,28 @@ async fn user_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()>
     if let Ok(id) = arg.parse::<i32>() {
         if let Ok(user) = ani.get_user(id).await {
             let article = gen_user_article(user);
-            results.push(article.into());
+            results.push(article);
         }
     } else {
         if let Some(result) = ani.search_user(&arg, offset, 10).await {
             for user in result {
                 let article = gen_user_article(user);
-                results.push(article.into());
+                results.push(article);
             }
         }
     }
 
     if results.is_empty() {
         if offset == 1 {
-            results.push(
-                inline::query::Article::new(t("no_results"), InputMessage::html(t("no_results")))
-                    .into(),
-            );
+            results.push(inline::query::Article::new(
+                t("no_results"),
+                InputMessage::html(t("no_results")),
+            ));
         } else {
-            results.push(
-                inline::query::Article::new(
-                    t("no_more_results"),
-                    InputMessage::html(t("no_more_results")),
-                )
-                .into(),
-            );
+            results.push(inline::query::Article::new(
+                t("no_more_results"),
+                InputMessage::html(t("no_more_results")),
+            ));
         }
     }
 

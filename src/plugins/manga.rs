@@ -464,31 +464,28 @@ async fn manga_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()
     if let Ok(id) = arg.parse::<i64>() {
         if let Ok(manga) = ani.get_manga(id).await {
             let article = gen_manga_article(manga, &i18n);
-            results.push(article.into());
+            results.push(article);
         }
     } else {
         if let Some(result) = ani.search_manga(&arg, offset, 10).await {
             for manga in result {
                 let article = gen_manga_article(manga, &i18n);
-                results.push(article.into());
+                results.push(article);
             }
         }
     }
 
     if results.is_empty() {
         if offset == 1 {
-            results.push(
-                inline::query::Article::new(t("no_results"), InputMessage::html(t("no_results")))
-                    .into(),
-            );
+            results.push(inline::query::Article::new(
+                t("no_results"),
+                InputMessage::html(t("no_results")),
+            ));
         } else {
-            results.push(
-                inline::query::Article::new(
-                    t("no_more_results"),
-                    InputMessage::html(t("no_more_results")),
-                )
-                .into(),
-            );
+            results.push(inline::query::Article::new(
+                t("no_more_results"),
+                InputMessage::html(t("no_more_results")),
+            ));
         }
     }
 
@@ -514,7 +511,7 @@ fn gen_manga_article(manga: Manga, i18n: &I18n) -> inline::query::Article {
     }
 
     let mut article = inline::query::Article::new(
-        manga.title.romaji(),
+        if manga.is_adult { "🔞 " } else { "" }.to_string() + &manga.title.romaji(),
         InputMessage::html(text)
             .link_preview(true)
             .reply_markup(&reply_markup::inline(vec![vec![button::inline(

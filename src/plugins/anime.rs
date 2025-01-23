@@ -450,31 +450,28 @@ async fn anime_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()
     if let Ok(id) = arg.parse::<i64>() {
         if let Ok(anime) = ani.get_anime(id).await {
             let article = gen_anime_article(&query, anime, &i18n);
-            results.push(article.into());
+            results.push(article);
         }
     } else {
         if let Some(result) = ani.search_anime(&arg, offset, 10).await {
             for anime in result {
                 let article = gen_anime_article(&query, anime, &i18n);
-                results.push(article.into());
+                results.push(article);
             }
         }
     }
 
     if results.is_empty() {
         if offset == 1 {
-            results.push(
-                inline::query::Article::new(t("no_results"), InputMessage::html(t("no_results")))
-                    .into(),
-            );
+            results.push(inline::query::Article::new(
+                t("no_results"),
+                InputMessage::html(t("no_results")),
+            ));
         } else {
-            results.push(
-                inline::query::Article::new(
-                    t("no_more_results"),
-                    InputMessage::html(t("no_more_results")),
-                )
-                .into(),
-            );
+            results.push(inline::query::Article::new(
+                t("no_more_results"),
+                InputMessage::html(t("no_more_results")),
+            ));
         }
     }
 
@@ -498,11 +495,7 @@ fn gen_anime_article(query: &InlineQuery, anime: Anime, i18n: &I18n) -> inline::
     let sender = query.sender();
 
     let mut article = inline::query::Article::new(
-        if anime.is_adult {
-            format!("🔞 {}", anime.title.romaji())
-        } else {
-            anime.title.romaji().to_string()
-        },
+        if anime.is_adult { "🔞 " } else { "" }.to_string() + &anime.title.romaji(),
         InputMessage::html(format!("<a href=\"{}\">⁠</a>", image_url) + &text)
             .link_preview(true)
             .reply_markup(&reply_markup::inline(vec![vec![button::inline(
