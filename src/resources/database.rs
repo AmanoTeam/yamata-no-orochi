@@ -1,0 +1,58 @@
+// Copyright 2025 - Andriel Ferreira
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+// <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
+// option. This file may not be copied, modified, or distributed
+// except according to those terms.
+
+//! The database resource.
+
+use std::path::Path;
+
+use ferogram::Result;
+use sqlx::{migrate::Migrator, PgPool};
+
+/// Where the migrations are located.
+const MIGRATIONS_PATH: &str = "./assets/migrations/";
+
+/// Database module.
+#[derive(Clone)]
+pub struct Database {
+    /// The connection string.
+    connection_string: String,
+    /// The database pool.
+    pool: PgPool,
+}
+
+impl Database {
+    /// Connects to the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `database_url` - The connection string.
+    pub async fn connect(database_url: &str) -> Self {
+        let pool = PgPool::connect(database_url)
+            .await
+            .expect("Failed to connect to the database.");
+
+        Self {
+            connection_string: database_url.to_string(),
+            pool,
+        }
+    }
+
+    /// Migrates the database.
+    ///
+    /// Search for migrations in the `assets/migrations` folder.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the migration fails.
+    pub async fn migrate(&self) -> Result<()> {
+        let migrator = Migrator::new(Path::new(MIGRATIONS_PATH))
+            .await
+            .expect("Failed to create the migrator.");
+        migrator.run(&self.pool).await.map_err(Into::into)
+    }
+}
