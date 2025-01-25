@@ -41,6 +41,8 @@ impl Config {
 pub struct App {
     /// The log level.
     pub log_level: String,
+    /// The database URL.
+    pub database_url: String,
     /// The session file path.
     pub session_file: String,
 }

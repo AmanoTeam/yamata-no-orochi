@@ -61,7 +61,7 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
         ctx.text()
     }
     .unwrap();
-    let mut args = text.split_whitespace().skip(1).collect::<Vec<&str>>();
+    let mut args = text.split_whitespace().skip(1).collect::<Vec<_>>();
 
     let sender = ctx.sender().unwrap();
 
@@ -463,13 +463,13 @@ async fn manga_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()
 
     if let Ok(id) = arg.parse::<i64>() {
         if let Ok(manga) = ani.get_manga(id).await {
-            let article = gen_manga_article(manga, &i18n);
+            let article = gen_manga_article(&query, manga, &i18n);
             results.push(article);
         }
     } else {
         if let Some(result) = ani.search_manga(&arg, offset, 10).await {
             for manga in result {
-                let article = gen_manga_article(manga, &i18n);
+                let article = gen_manga_article(&query, manga, &i18n);
                 results.push(article);
             }
         }
@@ -500,11 +500,13 @@ async fn manga_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()
 }
 
 /// Generates an inline query article for a manga.
-fn gen_manga_article(manga: Manga, i18n: &I18n) -> inline::query::Article {
+fn gen_manga_article(query: &InlineQuery, manga: Manga, i18n: &I18n) -> inline::query::Article {
     let t = |key: &str| i18n.translate(key);
 
     let mut text = utils::gen_manga_info(&manga, &i18n);
     let image_url = manga.banner.or(manga.cover.largest().map(String::from));
+
+    let sender = query.sender();
 
     if let Some(image_url) = image_url.as_ref() {
         text = format!("<a href=\"{}\">⁠</a>", image_url) + &text;
@@ -516,7 +518,7 @@ fn gen_manga_article(manga: Manga, i18n: &I18n) -> inline::query::Article {
             .link_preview(true)
             .reply_markup(&reply_markup::inline(vec![vec![button::inline(
                 t("load_more_btn"),
-                format!("manga {}", manga.id),
+                format!("manga {0} {1}", manga.id, sender.id()),
             )]])),
     )
     .description(shorten_text(remove_html(manga.description), 150));

@@ -9,13 +9,14 @@
 //! The bot.
 
 mod config;
+pub mod models;
 mod plugins;
 mod resources;
 pub mod utils;
 
 use ferogram::{Client, Injector, Result};
 use grammers_client::{types::inline, InputMessage, Update};
-use resources::{anilist::AniList, i18n::I18n};
+use resources::{anilist::AniList, database::Database, i18n::I18n};
 
 fn main() -> Result<()> {
     tokio_uring::start(async {
@@ -67,7 +68,7 @@ fn main() -> Result<()> {
                             .answer(vec![inline::query::Article::new("Erro", InputMessage::html(format!(
                                 "Ocorreu um erro enquanto processávamos sua solicitação:\n<blockquote>{}</blockquote>\n\nReporte em @Yonorochi.",
                                 err
-                            ))).description("Ocorreu um erro enquanto processávamos sua solicitação.").into()])
+                            ))).description("Ocorreu um erro enquanto processávamos sua solicitação.")])
                             .switch_pm("Reportar erro", "error_report")
                             .send()
                             .await?;
@@ -97,6 +98,11 @@ fn main() -> Result<()> {
         // Initialize and register the AniList resource.
         let anilist = AniList::new();
         injector.insert(anilist);
+
+        // Initialize and register the database resource.
+        /* let database = Database::connect(&config.app.database_url).await;
+        database.migrate().await?;
+        injector.insert(database); */
 
         // Register the handlers and run the client.
         client
