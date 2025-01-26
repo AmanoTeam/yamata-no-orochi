@@ -207,7 +207,7 @@ pub fn gen_anime_info(anime: &Anime, i18n: &I18n) -> String {
 
     if !anime.description.is_empty() {
         text.push_str(&format!(
-            "\n<blockquote><i>{}</i></blockquote>\n",
+            "\n<blockquote collapsed><i>{}</i></blockquote>\n",
             shorten_text(remove_html(&anime.description), 500).as_str()
         ));
     }
@@ -321,7 +321,7 @@ pub fn gen_manga_info(manga: &Manga, i18n: &I18n) -> String {
 
     if !manga.description.is_empty() {
         text.push_str(&format!(
-            "\n<blockquote><i>{}</i></blockquote>\n",
+            "\n<blockquote collapsed><i>{}</i></blockquote>\n",
             shorten_text(remove_html(&manga.description), 350).as_str()
         ));
     }
@@ -339,7 +339,7 @@ pub fn gen_user_info(user: &User) -> String {
 
     if let Some(about) = user.about.as_ref() {
         text.push_str(&format!(
-            "\n<blockquote>{}</blockquote>\n",
+            "\n<blockquote collapsed>{}</blockquote>\n",
             shorten_text(remove_html(about), 250)
         ));
     }
