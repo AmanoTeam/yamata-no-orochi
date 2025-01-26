@@ -125,17 +125,10 @@ async fn user_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()>
     let offset = query.offset().parse::<u16>().unwrap_or(1);
     let mut results = Vec::new();
 
-    if let Ok(id) = arg.parse::<i32>() {
-        if let Ok(user) = ani.get_user(id).await {
+    if let Some(result) = ani.search_user(&arg, offset, 10).await {
+        for user in result {
             let article = gen_user_article(user);
             results.push(article);
-        }
-    } else {
-        if let Some(result) = ani.search_user(&arg, offset, 10).await {
-            for user in result {
-                let article = gen_user_article(user);
-                results.push(article);
-            }
         }
     }
 

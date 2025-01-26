@@ -461,17 +461,10 @@ async fn manga_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()
     let offset = query.offset().parse::<u16>().unwrap_or(1);
     let mut results = Vec::new();
 
-    if let Ok(id) = arg.parse::<i64>() {
-        if let Ok(manga) = ani.get_manga(id).await {
+    if let Some(result) = ani.search_manga(&arg, offset, 10).await {
+        for manga in result {
             let article = gen_manga_article(&query, manga, &i18n);
             results.push(article);
-        }
-    } else {
-        if let Some(result) = ani.search_manga(&arg, offset, 10).await {
-            for manga in result {
-                let article = gen_manga_article(&query, manga, &i18n);
-                results.push(article);
-            }
         }
     }
 
