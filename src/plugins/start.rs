@@ -15,7 +15,7 @@ use crate::resources::I18n;
 
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
-    router.handler(
+    router.register(
         handler::new_message(filter::command("start").description("Start the bot.")).then(start),
     )
 }

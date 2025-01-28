@@ -33,20 +33,20 @@ const ANILIST_BANNER_URL: &str = "https://img.anili.st/media/";
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
     router
-        .handler(
+        .register(
             handler::new_message(
                 filter::commands(&["a", "anime"]).description("Search for animes."),
             )
             .then(anime),
         )
-        .handler(handler::callback_query(filter::regex(r"^anime (\d+) (\d+)")).then(anime))
-        .handler(
+        .register(handler::callback_query(filter::regex(r"^anime (\d+) (\d+)")).then(anime))
+        .register(
             handler::callback_query(filter::regex(
                 r"^anime (studios|synonyms|episodes|staff|chars|tags|links) (\d+) (\d+)",
             ))
             .then(anime_info),
         )
-        .handler(
+        .register(
             handler::inline_query(filter::regex(r"^[\.!]?a(n(i(m(e)?)?)?)? (.+)"))
                 .then(anime_inline),
         )

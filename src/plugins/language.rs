@@ -24,7 +24,7 @@ use crate::{
 /// Language plugin setup.
 pub fn setup(router: Router) -> Router {
     router
-        .handler(
+        .register(
             handler::new_message(
                 filter::commands(&["lang", "language"])
                     .description("Change the bot language.")
@@ -32,11 +32,11 @@ pub fn setup(router: Router) -> Router {
             )
             .then(language),
         )
-        .handler(
+        .register(
             handler::callback_query(filter::regex("^language$").and(filter::administrator))
                 .then(language),
         )
-        .handler(
+        .register(
             handler::callback_query(
                 filter::regex(r"^language set (\w+)$").and(filter::administrator),
             )

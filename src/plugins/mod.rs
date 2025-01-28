@@ -21,11 +21,11 @@ mod user;
 /// The plugins setup.
 pub fn setup(router: Router) -> Router {
     router
-        .router(ping::setup)
-        .router(start::setup)
-        .router(language::setup)
-        .router(anime::setup)
-        .router(manga::setup)
-        .router(user::setup)
-        .router(inline::setup)
+        .extend(ping::setup)
+        .extend(start::setup)
+        .extend(language::setup)
+        .extend(anime::setup)
+        .extend(manga::setup)
+        .extend(user::setup)
+        .extend(inline::setup)
 }

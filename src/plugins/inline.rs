@@ -18,7 +18,7 @@ use crate::resources::I18n;
 
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
-    router.handler(handler::inline_query(filter::always).then(inline))
+    router.register(handler::inline_query(filter::always).then(inline))
 }
 
 /// The inline handler.
