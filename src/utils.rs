@@ -191,7 +191,7 @@ pub fn gen_anime_info(anime: &Anime, i18n: &I18n) -> String {
             t("genres"),
             genres
                 .iter()
-                .map(|genre| format!("#{}", genre))
+                .map(|genre| format!("#{}", genre.replace("-", "")))
                 .collect::<Vec<_>>()
                 .join(" ")
         ));
@@ -297,7 +297,7 @@ pub fn gen_manga_info(manga: &Manga, i18n: &I18n) -> String {
             t("genres"),
             genres
                 .iter()
-                .map(|genre| format!("#{}", genre))
+                .map(|genre| format!("#{}", genre.replace("-", "")))
                 .collect::<Vec<_>>()
                 .join(" ")
         ));
