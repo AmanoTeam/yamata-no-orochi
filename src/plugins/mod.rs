@@ -14,12 +14,14 @@ mod anime;
 mod inline;
 mod language;
 mod manga;
+mod ping;
 mod start;
 mod user;
 
 /// The plugins setup.
 pub fn setup(router: Router) -> Router {
     router
+        .router(ping::setup)
         .router(start::setup)
         .router(language::setup)
         .router(anime::setup)
