@@ -34,7 +34,7 @@
     "load_more_btn": "➕ Load more",
     "characters_btn": "👥 Characters",
 
-    "start": "Hello! I'm <s>Yamata no Orochi</s>, a bot that uses the <a href='https://docs.anilist.co/'>AniList API</a> to search for anime and manga.",
+    "start": "<b>Hello</b>! I'm <s>Yamata no Orochi</s>, a bot that uses the <a href='https://docs.anilist.co/'>AniList API</a> to search for anime and manga.",
 
     "language": "To change my language, use the buttons below, select the one you want:",
     "new_language": "The language has been set to: <b>${new_language}</b>.",

@@ -11,6 +11,11 @@ repository = "https://github.com/AmanoTeam/yamata-no-orochi"
 keywords = ["telegram", "bot", "anilist", "anime", "manga"]
 edition = "2021"
 
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+
 [dependencies]
 # ferogram = { git = "https://github.com/AmanoTeam/ferogram.git" }
 ferogram = { path = "../ferogram/lib/ferogram" }
