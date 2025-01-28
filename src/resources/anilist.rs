@@ -10,13 +10,12 @@
 
 use std::{sync::Arc, time::Duration};
 
-use rand::Rng;
 use rust_anilist::{
     models::{Anime, Manga, User},
     Client, Error,
 };
 
-use super::cache::Cache;
+use crate::resources::Cache;
 
 /// AniList module.
 #[derive(Clone)]

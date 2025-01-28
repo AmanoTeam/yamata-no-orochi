@@ -18,7 +18,7 @@ use maplit::hashmap;
 use rust_anilist::models::User;
 
 use crate::{
-    resources::{anilist::AniList, i18n::I18n},
+    resources::{AniList, I18n},
     utils,
 };
 

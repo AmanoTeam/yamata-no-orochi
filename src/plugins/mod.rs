@@ -12,6 +12,7 @@ use ferogram::Router;
 
 mod anime;
 mod inline;
+mod language;
 mod manga;
 mod start;
 mod user;
@@ -20,6 +21,7 @@ mod user;
 pub fn setup(router: Router) -> Router {
     router
         .router(start::setup)
+        .router(language::setup)
         .router(anime::setup)
         .router(manga::setup)
         .router(user::setup)

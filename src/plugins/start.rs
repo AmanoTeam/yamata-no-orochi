@@ -11,7 +11,7 @@
 use ferogram::{filter, handler, Context, Result, Router};
 use grammers_client::InputMessage;
 
-use crate::resources::i18n::I18n;
+use crate::resources::I18n;
 
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {

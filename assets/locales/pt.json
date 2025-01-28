@@ -1,4 +1,7 @@
 {
+    "_FLAG": "🇧🇷",
+    "_NAME": "Português",
+
     "tags": "Tags",
     "date": "Data",
     "links": "Links",
@@ -32,6 +35,10 @@
     "characters_btn": "👥 Personagens",
 
     "start": "<b>Olá</b>! Eu sou o <s>Yamata no Orochi</s>, um bot que usa a <a href='https://docs.anilist.co/'>AniList API</a> para pesquisar por anime e manga.",
+
+    "language": "Para alterar meu idioma, utilize os botões abaixo, selecione aquele que desejar:",
+    "new_language": "O idioma foi definido para: <b>${new_language}</b>.",
+    "already_language": "O idioma já está definido para: ${language}.",
 
     "not_allowed": "Não autorizado.",
     "not_available": "Não disponível.",

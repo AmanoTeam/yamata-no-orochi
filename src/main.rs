@@ -9,6 +9,7 @@
 //! The bot.
 
 mod config;
+mod middlewares;
 pub mod models;
 mod plugins;
 mod resources;
@@ -16,7 +17,7 @@ pub mod utils;
 
 use ferogram::{Client, Injector, Result};
 use grammers_client::{types::inline, InputMessage, Update};
-use resources::{anilist::AniList, database::Database, i18n::I18n};
+use resources::{AniList, Database, I18n};
 
 fn main() -> Result<()> {
     tokio_uring::start(async {
@@ -47,8 +48,8 @@ fn main() -> Result<()> {
                 match update {
                     Update::NewMessage(message) | Update::MessageEdited(message) => {
                         message
-                            .reply(InputMessage::text(format!(
-                                "Ocorreu um erro enquanto processávamos sua mensagem:\n<blockquote>{}</blockquote>\n\nReporte em @Yonorochi.",
+                            .reply(InputMessage::html(format!(
+                                "Ocorreu um erro enquanto processávamos sua mensagem:\n\n<blockquote>{}</blockquote>\n\nReporte em @Yonorochi.",
                                 err
                             )))
                             .await?;
@@ -57,7 +58,7 @@ fn main() -> Result<()> {
                         query
                             .answer()
                             .alert(format!(
-                                "Ocorreu um erro enquanto processávamos sua solicitação:\n{}\n\nReporte em @Yonorochi.",
+                                "Erro:\n{}\n\nReporte em @Yonorochi.",
                                 err
                             ))
                             .send()
@@ -66,7 +67,7 @@ fn main() -> Result<()> {
                     Update::InlineQuery(query) => {
                         query
                             .answer(vec![inline::query::Article::new("Erro", InputMessage::html(format!(
-                                "Ocorreu um erro enquanto processávamos sua solicitação:\n<blockquote>{}</blockquote>\n\nReporte em @Yonorochi.",
+                                "Ocorreu um erro enquanto processávamos sua solicitação:\n\n<blockquote>{}</blockquote>\n\nReporte em @Yonorochi.",
                                 err
                             ))).description("Ocorreu um erro enquanto processávamos sua solicitação.")])
                             .switch_pm("Reportar erro", "error_report")
@@ -100,13 +101,17 @@ fn main() -> Result<()> {
         injector.insert(anilist);
 
         // Initialize and register the database resource.
-        /* let database = Database::connect(&config.app.database_url).await;
+        let database = Database::connect(&config.app.database_url).await;
         database.migrate().await?;
-        injector.insert(database); */
+        injector.insert(database);
 
         // Register the handlers and run the client.
         client
-            .dispatcher(|dp| dp.resources(|_| injector).router(plugins::setup))
+            .dispatcher(|dp| {
+                dp.resources(|_| injector)
+                    .router(plugins::setup)
+                    .middlewares(middlewares::setup)
+            })
             .run()
             .await?;
 

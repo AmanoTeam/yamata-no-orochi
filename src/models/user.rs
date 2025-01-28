@@ -21,6 +21,10 @@ pub struct User {
     pub id: i64,
     /// The user's Anilist ID.
     pub anilist_id: Option<i32>,
+    /// The user's Anilist token.
+    pub anilist_token: Option<String>,
+    /// The user's langauge code.
+    pub language_code: String,
     /// The user's created at date.
     pub created_at: DateTime<Utc>,
     /// The user's updated at date.
@@ -29,11 +33,12 @@ pub struct User {
 
 /// The new user model.
 #[derive(Debug, FromRow, Table, Clone)]
+#[tiny_orm(table_name = "users")]
 pub struct NewUser {
     /// The user's ID.
     pub id: i64,
-    /// The user's Anilist ID.
-    pub anilist_id: Option<i32>,
+    /// The user's langauge code.
+    pub language_code: String,
 }
 
 impl NewUser {
@@ -42,19 +47,24 @@ impl NewUser {
     /// # Arguments
     ///
     /// * `id` - The user's ID.
-    /// * `anilist_id` - The user's Anilist ID.
-    pub fn new(id: i64, anilist_id: Option<i32>) -> Self {
-        Self { id, anilist_id }
+    /// * `language_code` - The user's language code.
+    pub fn new(id: i64, language_code: String) -> Self {
+        Self { id, language_code }
     }
 }
 
 /// The update user model.
 #[derive(Debug, FromRow, Table, Clone)]
+#[tiny_orm(table_name = "users")]
 pub struct UpdateUser {
     /// The user's ID.
     pub id: i64,
     /// The user's Anilist ID.
     pub anilist_id: Option<i32>,
+    /// The user's Anilist token.
+    pub anilist_token: Option<String>,
+    /// The user's langauge code.
+    pub language_code: String,
 }
 
 impl From<User> for UpdateUser {
@@ -62,6 +72,8 @@ impl From<User> for UpdateUser {
         Self {
             id: user.id,
             anilist_id: user.anilist_id,
+            anilist_token: user.anilist_token,
+            language_code: user.language_code,
         }
     }
 }

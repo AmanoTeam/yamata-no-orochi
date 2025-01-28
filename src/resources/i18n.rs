@@ -89,6 +89,11 @@ impl I18n {
         current_locale.clone()
     }
 
+    /// Gets the available locales.
+    pub fn locales(&self) -> Vec<String> {
+        self.locales.keys().cloned().collect()
+    }
+
     /// Sets the current locale.
     ///
     /// # Arguments

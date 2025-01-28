@@ -1,0 +1,65 @@
+{
+    "_FLAG": "🇺🇸",
+    "_NAME": "English",
+
+    "tags": "Tags",
+    "date": "Date",
+    "links": "Links",
+    "manga": "Manga",
+    "score": "Score",
+    "status": "Status",
+    "format": "Format",
+    "genres": "Genres",
+    "episode": "Episode",
+    "volumes": "Volumes",
+    "chapters": "Chapters",
+    "episodes": "Episodes",
+    "characters": "Characters",
+    "time_until": "Time until",
+
+    "back_btn": "⬅️ Back",
+    "next_btn": "Next ➡️",
+    "tags_btn": "🏷 Tags",
+    "anime_btn": "📺 Anime",
+    "manga_btn": "📚 Manga",
+    "links_btn": "🖇 Links",
+    "staff_btn": "👨‍👩‍👧‍👦 Staff",
+    "reload_btn": "🔄 Reload",
+    "search_btn": "➕ Search",
+    "studios_btn": "🎬 Studios",
+    "episodes_btn": "📺 Episodes",
+    "chapters_btn": "📑 Chapters",
+    "previous_btn": "⬅️ Previous",
+    "synonyms_btn": "🔎 Synonyms",
+    "load_more_btn": "➕ Load more",
+    "characters_btn": "👥 Characters",
+
+    "start": "Hello! I'm <s>Yamata no Orochi</s>, a bot that uses the <a href='https://docs.anilist.co/'>AniList API</a> to search for anime and manga.",
+
+    "language": "To change my language, use the buttons below, select the one you want:",
+    "new_language": "The language has been set to: <b>${new_language}</b>.",
+    "already_language": "The language is already set to: ${language}.",
+
+    "not_allowed": "Not allowed.",
+    "not_available": "Not available.",
+    "not_implemented": "Not implemented.",
+
+    "no_results": "No results found.",
+    "search_results": "Results for <b>${search}</b>:",
+    "no_more_results": "No more results to display.",
+
+    "synonyms": "Synonyms",
+    "no_synonyms": "No synonyms found.",
+
+    "anime_usage": "Use the command followed by an <b>id</b> or <b>title</b>.\n\n<b>Examples:</b>\n• <code>/anime 123456</code>\n• <code>/anime Naruto</code>\n\nYou can also use the <i>inline</i> mode using the prefix <code>!a</code> or the button below.",
+    "anime_not_found": "Anime not found.",
+
+    "manga_usage": "Use the command followed by an <b>id</b> or <b>title</b>.\n\n<b>Examples:</b>\n• <code>/manga 123456</code>\n• <code>/manga One Piece</code>\n\nYou can also use the <i>inline</i> mode using the prefix <code>!m</code> or the button below.",
+    "manga_not_found": "Manga not found.",
+
+    "user_usage": "Use the command followed by an <b>id</b> or <b>username</b>.\n\n<b>Examples:</b>\n• <code>/user 123456</code>\n• <code>/user Yonorochi</code>\n\nYou can also use the <i>inline</i> mode using the prefix <code>!u</code> or the button below.",
+    "user_not_found": "User not found.",
+
+    "how_to_use_inline": "How to use inline mode?",
+    "how_to_use_inline_text": "<b>How to use inline mode?</b>\nUsing one of the prefixes below followed by your <b>id</b> or <b>name/title</b>.\n\n<b>Prefixes</b>:\n• <code>!a</code> for anime\n• <code>!m</code> for manga\n• <code>!u</code> for user\n\n<b>Examples:</b>\n• <code>@YonorochiBot !a Naruto</code>\n• <code>@YonorochiBot !m One Piece</code>\n• <code>@YonorochiBot !u 123456</code>"
+}

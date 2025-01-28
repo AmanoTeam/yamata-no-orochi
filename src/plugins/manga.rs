@@ -24,7 +24,7 @@ use maplit::hashmap;
 use rust_anilist::models::{Manga, RelationType};
 
 use crate::{
-    resources::{anilist::AniList, i18n::I18n},
+    resources::{AniList, I18n},
     utils::{self, gen_char_list, gen_pagination_buttons, remove_html, shorten_text},
 };
 

@@ -12,3 +12,8 @@ pub mod anilist;
 pub mod cache;
 pub mod database;
 pub mod i18n;
+
+pub use anilist::AniList;
+pub use cache::Cache;
+pub use database::Database;
+pub use i18n::I18n;

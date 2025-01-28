@@ -6,10 +6,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//! Database models.
+//! Middlewares.
 
-pub mod group;
-pub mod user;
+mod update_chat_lang;
 
-pub use group::{Group, NewGroup, UpdateGroup};
-pub use user::{NewUser, UpdateUser, User};
+use update_chat_lang::UpdateChatLang;
+
+use ferogram::MiddlewareStack;
+
+/// The middlewares setup.
+pub fn setup(stack: MiddlewareStack) -> MiddlewareStack {
+    stack.before(UpdateChatLang)
+}

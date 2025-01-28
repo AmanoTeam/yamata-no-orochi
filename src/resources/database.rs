@@ -19,8 +19,6 @@ const MIGRATIONS_PATH: &str = "./assets/migrations/";
 /// Database module.
 #[derive(Clone)]
 pub struct Database {
-    /// The connection string.
-    connection_string: String,
     /// The database pool.
     pool: PgPool,
 }
@@ -32,14 +30,18 @@ impl Database {
     ///
     /// * `database_url` - The connection string.
     pub async fn connect(database_url: &str) -> Self {
+        log::info!("connecting to the database...");
         let pool = PgPool::connect(database_url)
             .await
-            .expect("Failed to connect to the database.");
+            .expect("failed to connect to the database.");
+        log::info!("connected to the database.");
 
-        Self {
-            connection_string: database_url.to_string(),
-            pool,
-        }
+        Self { pool }
+    }
+
+    /// Gets the database pool.
+    pub fn pool(&self) -> &PgPool {
+        &self.pool
     }
 
     /// Migrates the database.
@@ -50,9 +52,13 @@ impl Database {
     ///
     /// Returns an error if the migration fails.
     pub async fn migrate(&self) -> Result<()> {
-        let migrator = Migrator::new(Path::new(MIGRATIONS_PATH))
-            .await
-            .expect("Failed to create the migrator.");
-        migrator.run(&self.pool).await.map_err(Into::into)
+        log::info!("migrating the database...");
+        let migrator = Migrator::new(Path::new(MIGRATIONS_PATH)).await?;
+        let result = migrator.run(&self.pool).await.map_err(Into::into);
+        if result.is_ok() {
+            log::info!("database migrated.");
+        }
+
+        result
     }
 }
