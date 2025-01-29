@@ -530,6 +530,7 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 [[package]]
 name = "ferogram"
 version = "0.1.2"
+source = "git+https://github.com/AmanoTeam/ferogram.git#41ee144fffcba6756f386b17c3e0a9b50753efa7"
 dependencies = [
  "async-recursion",
  "async-trait",
@@ -547,6 +548,7 @@ dependencies = [
 [[package]]
 name = "ferogram-macros"
 version = "0.1.0"
+source = "git+https://github.com/AmanoTeam/ferogram.git#41ee144fffcba6756f386b17c3e0a9b50753efa7"
 
 [[package]]
 name = "flate2"

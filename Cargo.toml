@@ -16,8 +16,7 @@ lto = true
 opt-level = "z"
 
 [dependencies]
-# ferogram = { git = "https://github.com/AmanoTeam/ferogram.git" }
-ferogram = { path = "../ferogram/lib/ferogram" }
+ferogram = { git = "https://github.com/AmanoTeam/ferogram.git" }
 grammers-client = { git = "https://github.com/Lonami/grammers.git", features = ["html", "serde"] }
 
 rust-anilist = { git = "https://github.com/AmanoTeam/rust-anilist.git" }
