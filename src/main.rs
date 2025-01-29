@@ -36,7 +36,8 @@ fn main() -> Result<()> {
         env_logger::init();
 
         // Initialize the client.
-        log::info!("connecting to Telegram...");
+        log::info!("connecting to the telegram server...");
+
         let client = Client::bot(config.telegram.bot_token)
             .api_id(config.telegram.api_id)
             .api_hash(config.telegram.api_hash)
@@ -86,7 +87,8 @@ fn main() -> Result<()> {
             .wait_for_ctrl_c()
             .build_and_connect()
             .await?;
-        log::info!("connected to Telegram");
+
+        log::info!("telegram server connected");
 
         // Initialize the injector.
         let mut injector = Injector::default();

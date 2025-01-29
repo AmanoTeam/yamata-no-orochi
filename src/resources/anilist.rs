@@ -23,13 +23,13 @@ pub struct AniList {
     /// The AniList client.
     client: Arc<rust_anilist::Client>,
     /// The cache for anime.
-    cache_anime: Arc<Cache<i64, Anime>>,
+    cache_anime: Cache<i64, Anime>,
     /// The cache for manga.
-    cache_manga: Arc<Cache<i64, Manga>>,
+    cache_manga: Cache<i64, Manga>,
     /// The cache for users.
-    cache_user: Arc<Cache<i32, User>>,
+    cache_user: Cache<i32, User>,
     /// The cache for characters.
-    cache_char: Arc<Cache<i64, Character>>,
+    cache_char: Cache<i64, Character>,
 }
 
 impl AniList {
@@ -37,10 +37,10 @@ impl AniList {
     pub fn new() -> Self {
         Self {
             client: Arc::new(Client::with_timeout(Duration::from_secs(15))),
-            cache_anime: Arc::new(Cache::with_capacity(50)),
-            cache_manga: Arc::new(Cache::with_capacity(50)),
-            cache_user: Arc::new(Cache::with_capacity(50)),
-            cache_char: Arc::new(Cache::with_capacity(50)),
+            cache_anime: Cache::with_capacity(50),
+            cache_manga: Cache::with_capacity(50),
+            cache_user: Cache::with_capacity(50),
+            cache_char: Cache::with_capacity(50),
         }
     }
 

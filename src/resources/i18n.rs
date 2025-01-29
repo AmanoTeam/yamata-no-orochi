@@ -53,6 +53,8 @@ impl I18n {
     ///
     /// Returns an error if the locales could not be loaded.
     pub fn load(&mut self) -> Result<()> {
+        log::debug!("loading locales from: {:?}", PATH);
+
         let locales = std::fs::read_dir(PATH)?
             .map(|entry| entry.expect("failed to read entry"))
             .map(|entry| {
@@ -73,7 +75,14 @@ impl I18n {
             .collect::<HashMap<String, Value>>();
         self.locales = locales;
 
-        log::debug!("locales loaded: {:?}", self.locales.keys());
+        log::info!(
+            "locales loaded: {}",
+            self.locales
+                .keys()
+                .map(|key| key.to_string())
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
 
         Ok(())
     }
