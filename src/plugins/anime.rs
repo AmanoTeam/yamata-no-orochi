@@ -321,7 +321,7 @@ async fn anime_info(query: CallbackQuery, i18n: I18n, ani: AniList) -> Result<()
                 let characters = anime.characters();
 
                 let per_page = 10;
-                let max_pages = (characters.len() / 15) + 1;
+                let max_pages = (characters.len() as f32 / 15f32).round() as usize + 1;
 
                 if characters.is_empty() {
                     query.answer().alert(t("not_available")).send().await?;
