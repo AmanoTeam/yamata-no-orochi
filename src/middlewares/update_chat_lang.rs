@@ -17,9 +17,10 @@ use grammers_client::{Client, Update};
 
 use crate::{
     models::{Group, NewGroup, NewUser, User},
-    resources::{database::Database, i18n::I18n},
+    resources::{Database, I18n},
 };
 
+/// The middleware to update the language of the chat.
 #[derive(Clone)]
 pub struct UpdateChatLang;
 

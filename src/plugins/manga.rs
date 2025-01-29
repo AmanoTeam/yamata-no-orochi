@@ -44,10 +44,7 @@ pub fn setup(router: Router) -> Router {
             ))
             .then(manga_info),
         )
-        .register(
-            handler::inline_query(filter::regex(r"^[\.!]?m(a(n(g(a)?)?)?)? (.+)"))
-                .then(manga_inline),
-        )
+        .register(handler::inline_query(filter::regex(r"^[\.!]?m (.+)")).then(manga_inline))
 }
 
 /// The manga command handler.

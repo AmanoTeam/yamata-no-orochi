@@ -63,8 +63,10 @@ impl I18n {
                     .to_str()
                     .expect("failed to convert file stem to string")
                     .to_string();
-                let content = std::fs::read_to_string(path).expect("failed to read file");
-                let value: Value = serde_json::from_str(&content).expect("failed to parse file");
+                let content = std::fs::read_to_string(path)
+                    .expect(&format!("failed to read locale: {}", locale));
+                let value: Value = serde_json::from_str(&content)
+                    .expect(&format!("failed to parse locale: {}", locale));
 
                 (locale, value)
             })

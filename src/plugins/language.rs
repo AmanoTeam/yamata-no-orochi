@@ -130,7 +130,6 @@ async fn language_set(ctx: Context, db: Database, i18n: I18n) -> Result<()> {
                 hashmap! { "new_language" => i18n.translate_from_locale("_NAME", language_code) },
             )).reply_markup(&reply_markup::inline(vec![vec![button::inline(t("back_btn"), "language")]])))
             .await?;
-        i18n.set_locale(language_code);
     }
 
     Ok(())

@@ -39,14 +39,24 @@ where
         }
     }
 
-    /// Retrieves a value from the cache.
+    /// Retrieves a cloned value from the cache.
     ///
     /// # Arguments
     ///
     /// * `key` - The key associated with the value to be retrieved.
     pub fn get(&self, key: &K) -> Option<V> {
-        let map = self.map.try_read().expect("Failed to lock the cache.");
+        let map = self.map.try_read().expect("failed to lock the cache.");
         map.get(key).cloned()
+    }
+
+    /// Retrieves a value from the cache and removes it.
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - The key associated with the value to be retrieved.
+    pub fn take(&self, key: &K) -> Option<V> {
+        let mut map = self.map.try_write().expect("failed to lock the cache.");
+        map.remove(key)
     }
 
     /// Inserts a value into the cache.

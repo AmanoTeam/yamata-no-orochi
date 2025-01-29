@@ -42,7 +42,8 @@ pub fn escape_html(text: impl Into<String>) -> String {
 ///
 /// This function takes a string input and removes the following HTML tags and chars:
 /// `<i>`, `</i>`, `<p>`, `</p>`, `<br>`, `<br/>`, `<br />`, `<em>`, `</em>`, `<li>`, `</li>`,
-/// `<ol>`, `</ol>`, `<ul>`, `</ul>`, `<center>`, `</center>` `<`, `>`, `&quot;`, `&#x27;`, `&#x2F;`.
+/// `<ol>`, `</ol>`, `<ul>`, `</ul>`, `<center>`, `</center>`, `<strong>`, `</strong>`, `<`, `>`,
+/// `&quot;`, `&#x27;`, `&#x2F;`.
 ///
 /// # Arguments
 ///
@@ -66,6 +67,8 @@ pub fn remove_html(text: impl Into<String>) -> String {
         .replace("</ul>", "")
         .replace("<center>", "")
         .replace("</center>", "")
+        .replace("<strong>", "")
+        .replace("</strong>", "")
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace("&quot;", "\"")
@@ -348,6 +351,53 @@ pub fn gen_user_info(user: &User) -> String {
         "\n🔗 | <a href=\"https://anilist.co/user/{}\">AniList</a>",
         user.id
     ));
+
+    text
+}
+
+/// Generates a formatted string containing detailed information about a character.
+///
+/// # Arguments
+///
+/// * `char` - A reference to an `Character` struct containing the character details.
+/// * `i18n` - A reference to an `I18n` struct containing the translations.
+pub fn gen_char_info(char: &Character, i18n: &I18n) -> String {
+    let t = |key: &str| i18n.translate(key);
+
+    let mut text = format!(
+        "<code>{0}</code> | <b>{1}</b>\n\n",
+        char.id,
+        char.name.full()
+    );
+
+    if let Some(age) = char.age.as_ref() {
+        text.push_str(&format!("🎂 | <b>{}</b>: <i>{}y</i>\n", t("age"), age));
+    }
+
+    if let Some(blood_type) = char.blood_type.as_ref() {
+        text.push_str(&format!(
+            "🩸 | <b>{}</b>: <i>{}</i>\n",
+            t("blood_type"),
+            blood_type
+        ));
+    }
+
+    if let Some(date_of_birth) = char.date_of_birth.as_ref() {
+        if date_of_birth.is_valid() {
+            text.push_str(&format!(
+                "📅 | <b>{}</b>: <i>{}</i>\n",
+                t("date_of_birth"),
+                date_of_birth.format("{dd}/{mm}/{yyyy}")
+            ));
+        }
+    }
+
+    if !char.description.is_empty() {
+        text.push_str(&format!(
+            "\n<blockquote expandable>{}</blockquote>\n",
+            shorten_text(remove_html(&char.description), 250)
+        ));
+    }
 
     text
 }

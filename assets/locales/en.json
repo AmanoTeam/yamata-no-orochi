@@ -2,6 +2,7 @@
     "_FLAG": "🇺🇸",
     "_NAME": "English",
 
+    "age": "Age",
     "tags": "Tags",
     "date": "Date",
     "links": "Links",
@@ -15,7 +16,9 @@
     "chapters": "Chapters",
     "episodes": "Episodes",
     "characters": "Characters",
+    "blood_type": "Blood type",
     "time_until": "Time until",
+    "date_of_birth": "Date of birth",
 
     "back_btn": "⬅️ Back",
     "next_btn": "Next ➡️",
@@ -24,6 +27,7 @@
     "manga_btn": "📚 Manga",
     "links_btn": "🖇 Links",
     "staff_btn": "👨‍👩‍👧‍👦 Staff",
+    "medias_btn": "🎬 Medias",
     "reload_btn": "🔄 Reload",
     "search_btn": "➕ Search",
     "studios_btn": "🎬 Studios",
@@ -33,6 +37,7 @@
     "synonyms_btn": "🔎 Synonyms",
     "load_more_btn": "➕ Load more",
     "characters_btn": "👥 Characters",
+    "voice_actors_btn": "🎙 Voice actors",
 
     "start": "<b>Hello</b>! I'm <s>Yamata no Orochi</s>, a bot that uses the <a href='https://docs.anilist.co/'>AniList API</a> to search for anime and manga.",
 
@@ -60,6 +65,9 @@
     "user_usage": "Use the command followed by an <b>id</b> or <b>username</b>.\n\n<b>Examples:</b>\n• <code>/user 123456</code>\n• <code>/user Yonorochi</code>\n\nYou can also use the <i>inline</i> mode using the prefix <code>!u</code> or the button below.",
     "user_not_found": "User not found.",
 
+    "character_usage": "Use the command followed by an <b>id</b> or <b>name</b>.\n\n<b>Examples:</b>\n• <code>/character 123456</code>\n• <code>/character Naruto</code>",
+    "character_not_found": "Character not found.",
+
     "how_to_use_inline": "How to use inline mode?",
-    "how_to_use_inline_text": "<b>How to use inline mode?</b>\nUsing one of the prefixes below followed by your <b>id</b> or <b>name/title</b>.\n\n<b>Prefixes</b>:\n• <code>!a</code> for anime\n• <code>!m</code> for manga\n• <code>!u</code> for user\n\n<b>Examples:</b>\n• <code>@YonorochiBot !a Naruto</code>\n• <code>@YonorochiBot !m One Piece</code>\n• <code>@YonorochiBot !u 123456</code>"
+    "how_to_use_inline_text": "<b>How to use inline mode?</b>\nUsing one of the prefixes below followed by your <b>id</b> or <b>name/title</b>.\n\n<b>Prefixes</b>:\n• <code>!a</code> for anime\n• <code>!m</code> for manga\n• <code>!u</code> for user\n• <code>!c</code> for character\n\n<b>Examples:</b>\n• <code>@YonorochiBot !a Naruto</code>\n• <code>@YonorochiBot !m One Piece</code>\n• <code>@YonorochiBot !u 123456</code>\n• <code>@YonorochiBot !c Itadori</code>"
 }

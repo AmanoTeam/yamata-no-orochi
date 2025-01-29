@@ -46,10 +46,7 @@ pub fn setup(router: Router) -> Router {
             ))
             .then(anime_info),
         )
-        .register(
-            handler::inline_query(filter::regex(r"^[\.!]?a(n(i(m(e)?)?)?)? (.+)"))
-                .then(anime_inline),
-        )
+        .register(handler::inline_query(filter::regex(r"^[\.!]?a (.+)")).then(anime_inline))
 }
 
 /// The anime command handler.

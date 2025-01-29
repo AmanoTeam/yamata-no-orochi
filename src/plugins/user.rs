@@ -30,9 +30,7 @@ pub fn setup(router: Router) -> Router {
                 .then(user),
         )
         .register(handler::callback_query(filter::regex(r"^user (\d+)")).then(user))
-        .register(
-            handler::inline_query(filter::regex(r"^[\.!]?u(s(e(r)?)?)? (.+)")).then(user_inline),
-        )
+        .register(handler::inline_query(filter::regex(r"^[\.!]?u (.+)")).then(user_inline))
 }
 
 /// The user handler.
