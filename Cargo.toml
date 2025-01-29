@@ -12,9 +12,8 @@ keywords = ["telegram", "bot", "anilist", "anime", "manga"]
 edition = "2021"
 
 [profile.release]
-strip = true
-opt-level = "z"
 lto = true
+opt-level = "z"
 
 [dependencies]
 # ferogram = { git = "https://github.com/AmanoTeam/ferogram.git" }
