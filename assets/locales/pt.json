@@ -66,7 +66,7 @@
     "user_not_found": "Usuário não encontrado.",
 
     "character_usage": "Utilize o comando seguido de um <b>id</b> ou <b>nome</b>.\n\n<b>Exemplos:</b>\n• <code>/character 123456</code>\n• <code>/character Naruto</code>",
-    "character_not_found": "Personagem nao encontrado.",
+    "character_not_found": "Personagem não encontrado.",
 
     "how_to_use_inline": "Como usar o modo inline?",
     "how_to_use_inline_text": "<b>Como usar o modo inline?</b>\nFazendo o uso de um dos prefixos abaixo seguido de seu <b>id</b> ou <b>nome/título</b>.\n\n<b>Prefixos</b>:\n• <code>!a</code> para anime\n• <code>!m</code> para manga\n• <code>!u</code> para usuário\n• <code>!c</code> para personagem\n\n<b>Exemplos:</b>\n• <code>@YonorochiBot !a Naruto</code>\n• <code>@YonorochiBot !m One Piece</code>\n• <code>@YonorochiBot !u 123456</code>\n• <code>@YonorochiBot !c Itadori</code>"

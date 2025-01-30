@@ -98,7 +98,8 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                     ctx.reply(InputMessage::html(t("no_results"))).await?;
                     return Ok(());
                 } else if result.len() == 1 {
-                    return send_manga_info(result[0].clone(), ctx, &i18n).await;
+                    let manga = ani.get_manga(result[0].id).await.unwrap_or_default();
+                    return send_manga_info(manga, ctx, &i18n).await;
                 }
 
                 let buttons = result
@@ -167,7 +168,7 @@ async fn send_manga_info(manga: Manga, ctx: Context, i18n: &I18n) -> Result<()> 
         ));
     }
 
-    if !manga.characters().is_empty() {
+    if manga.characters().is_ok() {
         buttons.push(button::inline(
             t("characters_btn"),
             format!("manga chars {0} {1}", manga.id, sender.id()),
@@ -190,8 +191,7 @@ async fn send_manga_info(manga: Manga, ctx: Context, i18n: &I18n) -> Result<()> 
 
     let mut buttons = split_btns_into_columns(buttons, 2);
 
-    let relations = manga.relations();
-    if !relations.is_empty() {
+    if let Ok(relations) = manga.relations() {
         let mut relations_buttons = Vec::new();
 
         let prequel = relations
@@ -332,7 +332,7 @@ async fn manga_info(query: CallbackQuery, i18n: I18n, ani: AniList) -> Result<()
                     .unwrap_or(&1.to_string())
                     .parse::<usize>()
                     .unwrap();
-                let characters = manga.characters();
+                let characters = manga.characters().unwrap_or_default();
 
                 let per_page = 10;
                 let max_pages = (characters.len() as f32 / 15f32).round() as usize + 1;

@@ -343,7 +343,7 @@ pub fn gen_user_info(user: &User) -> String {
     if let Some(about) = user.about.as_ref() {
         text.push_str(&format!(
             "\n<blockquote expandable>{}</blockquote>\n",
-            shorten_text(remove_html(about), 250)
+            shorten_text(remove_html(about), 300)
         ));
     }
 
@@ -364,19 +364,15 @@ pub fn gen_user_info(user: &User) -> String {
 pub fn gen_char_info(char: &Character, i18n: &I18n) -> String {
     let t = |key: &str| i18n.translate(key);
 
-    let mut text = format!(
-        "<code>{0}</code> | <b>{1}</b>\n\n",
-        char.id,
-        char.name.full()
-    );
+    let mut text = format!("<code>{0}</code> | <b>{1}</b>\n", char.id, char.name.full());
 
     if let Some(age) = char.age.as_ref() {
-        text.push_str(&format!("🎂 | <b>{}</b>: <i>{}y</i>\n", t("age"), age));
+        text.push_str(&format!("\n🎂 | <b>{}</b>: <i>{}</i>", t("age"), age));
     }
 
     if let Some(blood_type) = char.blood_type.as_ref() {
         text.push_str(&format!(
-            "🩸 | <b>{}</b>: <i>{}</i>\n",
+            "\n🩸 | <b>{}</b>: <i>{}</i>\n",
             t("blood_type"),
             blood_type
         ));
@@ -385,7 +381,7 @@ pub fn gen_char_info(char: &Character, i18n: &I18n) -> String {
     if let Some(date_of_birth) = char.date_of_birth.as_ref() {
         if date_of_birth.is_valid() {
             text.push_str(&format!(
-                "📅 | <b>{}</b>: <i>{}</i>\n",
+                "\n📅 | <b>{}</b>: <i>{}</i>\n",
                 t("date_of_birth"),
                 date_of_birth.format("{dd}/{mm}/{yyyy}")
             ));
@@ -395,7 +391,7 @@ pub fn gen_char_info(char: &Character, i18n: &I18n) -> String {
     if !char.description.is_empty() {
         text.push_str(&format!(
             "\n<blockquote expandable>{}</blockquote>\n",
-            shorten_text(remove_html(&char.description), 250)
+            shorten_text(remove_html(&char.description), 400)
         ));
     }
 
