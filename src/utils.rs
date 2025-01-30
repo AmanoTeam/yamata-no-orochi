@@ -200,12 +200,14 @@ pub fn gen_anime_info(anime: &Anime, i18n: &I18n) -> String {
         ));
     }
 
-    if let Some(episodes) = anime.episodes {
-        text.push_str(&format!(
-            "🎞 | <b>{0}</b>: <i>{1}</i>\n",
-            t("episodes"),
-            episodes
-        ));
+    if !matches!(anime.format, Format::Movie | Format::Music) {
+        if let Some(episodes) = anime.episodes {
+            text.push_str(&format!(
+                "🎞 | <b>{0}</b>: <i>{1}</i>\n",
+                t("episodes"),
+                episodes
+            ));
+        }
     }
 
     if !anime.description.is_empty() {
@@ -306,12 +308,14 @@ pub fn gen_manga_info(manga: &Manga, i18n: &I18n) -> String {
         ));
     }
 
-    if let Some(chapters) = manga.chapters {
-        text.push_str(&format!(
-            "🔢 | <b>{0}</b>: <i>{1}</i>\n",
-            t("chapters"),
-            chapters
-        ));
+    if !matches!(manga.format, Format::Music) {
+        if let Some(chapters) = manga.chapters {
+            text.push_str(&format!(
+                "🔢 | <b>{0}</b>: <i>{1}</i>\n",
+                t("chapters"),
+                chapters
+            ));
+        }
     }
 
     if let Some(volumes) = manga.volumes {
