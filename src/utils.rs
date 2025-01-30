@@ -119,9 +119,11 @@ pub fn gen_anime_info(anime: &Anime, i18n: &I18n) -> String {
             }
         }
 
-        if let Some(date) = anime.end_date.as_ref() {
-            if date.is_valid() {
-                text.push_str(&format!(" - <i>{}</i>", date.format("{dd}/{mm}/{yyyy}")));
+        if !matches!(anime.format, Format::Movie | Format::Music) {
+            if let Some(date) = anime.end_date.as_ref() {
+                if date.is_valid() {
+                    text.push_str(&format!(" - <i>{}</i>", date.format("{dd}/{mm}/{yyyy}")));
+                }
             }
         }
 
@@ -246,9 +248,11 @@ pub fn gen_manga_info(manga: &Manga, i18n: &I18n) -> String {
             }
         }
 
-        if let Some(date) = manga.end_date.as_ref() {
-            if date.is_valid() {
-                text.push_str(&format!(" - <i>{}</i>", date.format("{dd}/{mm}/{yyyy}")));
+        if !matches!(manga.format, Format::Music) {
+            if let Some(date) = manga.end_date.as_ref() {
+                if date.is_valid() {
+                    text.push_str(&format!(" - <i>{}</i>", date.format("{dd}/{mm}/{yyyy}")));
+                }
             }
         }
 
