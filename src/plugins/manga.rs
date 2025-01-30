@@ -40,7 +40,7 @@ pub fn setup(router: Router) -> Router {
         .register(handler::callback_query(filter::regex(r"^manga (\d+)")).then(manga))
         .register(
             handler::callback_query(filter::regex(
-                r"^manga (studios|synonyms|chapters|staff|chars|tags|links) (\d+) (\d+)",
+                r"^manga (studios|chapters|staff|chars|tags|links) (\d+) (\d+)",
             ))
             .then(manga_info),
         )
@@ -144,13 +144,6 @@ async fn send_manga_info(manga: Manga, ctx: Context, i18n: &I18n) -> Result<()> 
         buttons.push(button::inline(
             t("studios_btn"),
             format!("manga studios {0} {1}", manga.id, sender.id()),
-        ));
-    }
-
-    if manga.synonyms.is_some() {
-        buttons.push(button::inline(
-            t("synonyms_btn"),
-            format!("manga synonyms {0} {1}", manga.id, sender.id()),
         ));
     }
 
@@ -292,38 +285,6 @@ async fn manga_info(query: CallbackQuery, i18n: I18n, ani: AniList) -> Result<()
 
         match info {
             "studios" => {}
-            "synonyms" => {
-                let synonyms = manga
-                    .synonyms
-                    .unwrap_or_else(|| vec![t("no_synonyms")])
-                    .join("; ");
-
-                if let Err(e) = query
-                    .answer()
-                    .cache_time(Duration::from_secs(120))
-                    .alert(format!("{}", synonyms))
-                    .send()
-                    .await
-                {
-                    if e.is("MESSAGE_TOO_LONG") {
-                        text.push_str(&format!(
-                            "📚 | <b>{0}</b>: <i>{1}</i>",
-                            t("synonyms"),
-                            synonyms
-                        ));
-
-                        query
-                            .answer()
-                            .edit(InputMessage::html(text).reply_markup(&reply_markup::inline(
-                                vec![vec![button::inline(
-                                    t("back_btn"),
-                                    format!("manga {0} {1}", manga_id, sender_id),
-                                )]],
-                            )))
-                            .await?;
-                    }
-                }
-            }
             "chapters" => {}
             "staff" => {}
             "chars" => {

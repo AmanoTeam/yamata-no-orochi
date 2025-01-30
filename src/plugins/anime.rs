@@ -42,7 +42,7 @@ pub fn setup(router: Router) -> Router {
         .register(handler::callback_query(filter::regex(r"^anime (\d+) (\d+)")).then(anime))
         .register(
             handler::callback_query(filter::regex(
-                r"^anime (studios|synonyms|episodes|staff|chars|tags|links) (\d+) (\d+)",
+                r"^anime (studios|episodes|staff|chars|tags|links) (\d+) (\d+)",
             ))
             .then(anime_info),
         )
@@ -143,13 +143,6 @@ async fn send_anime_info(anime: Anime, ctx: Context, i18n: &I18n) -> Result<()> 
         buttons.push(button::inline(
             t("studios_btn"),
             format!("anime studios {0} {1}", anime.id, sender.id()),
-        ));
-    }
-
-    if anime.synonyms.is_some() {
-        buttons.push(button::inline(
-            t("synonyms_btn"),
-            format!("anime synonyms {0} {1}", anime.id, sender.id()),
         ));
     }
 
@@ -278,38 +271,6 @@ async fn anime_info(query: CallbackQuery, i18n: I18n, ani: AniList) -> Result<()
 
         match info {
             "studios" => {}
-            "synonyms" => {
-                let synonyms = anime
-                    .synonyms
-                    .unwrap_or_else(|| vec![t("no_synonyms")])
-                    .join("; ");
-
-                if let Err(e) = query
-                    .answer()
-                    .cache_time(Duration::from_secs(120))
-                    .alert(format!("{}", synonyms))
-                    .send()
-                    .await
-                {
-                    if e.is("MESSAGE_TOO_LONG") {
-                        text.push_str(&format!(
-                            "📚 | <b>{0}</b>: <i>{1}</i>",
-                            t("synonyms"),
-                            synonyms
-                        ));
-
-                        query
-                            .answer()
-                            .edit(InputMessage::html(text).reply_markup(&reply_markup::inline(
-                                vec![vec![button::inline(
-                                    t("back_btn"),
-                                    format!("anime {0} {1}", anime_id, sender_id),
-                                )]],
-                            )))
-                            .await?;
-                    }
-                }
-            }
             "episodes" => {}
             "staff" => {}
             "chars" => {

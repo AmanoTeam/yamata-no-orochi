@@ -34,7 +34,6 @@
     "episodes_btn": "📺 Episodes",
     "chapters_btn": "📑 Chapters",
     "previous_btn": "⬅️ Previous",
-    "synonyms_btn": "🔎 Synonyms",
     "load_more_btn": "➕ Load more",
     "characters_btn": "👥 Characters",
     "voice_actors_btn": "🎙 Voice actors",
@@ -52,9 +51,6 @@
     "no_results": "No results found.",
     "search_results": "Results for <b>${search}</b>:",
     "no_more_results": "No more results to display.",
-
-    "synonyms": "Synonyms",
-    "no_synonyms": "No synonyms found.",
 
     "anime_usage": "Use the command followed by an <b>id</b> or <b>title</b>.\n\n<b>Examples:</b>\n• <code>/anime 123456</code>\n• <code>/anime Naruto</code>\n\nYou can also use the <i>inline</i> mode using the prefix <code>!a</code> or the button below.",
     "anime_not_found": "Anime not found.",

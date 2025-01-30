@@ -34,7 +34,6 @@
     "episodes_btn": "📺 Episódios",
     "chapters_btn": "📑 Capítulos",
     "previous_btn": "⬅️ Anterior",
-    "synonyms_btn": "🔎 Sinônimos",
     "load_more_btn": "➕ Carregar mais",
     "characters_btn": "👥 Personagens",
     "voice_actors_btn": "🎙 Dubladores",
@@ -52,9 +51,6 @@
     "no_results": "Nenhum resultado encontrado.",
     "search_results": "Resultados para <b>${search}</b>:",
     "no_more_results": "Não há mais resultados para exibir.",
-
-    "synonyms": "Sinônimos",
-    "no_synonyms": "Não há sinônimos.",
 
     "anime_usage": "Utilize o comando seguido de um <b>id</b> ou <b>título</b>.\n\n<b>Exemplos:</b>\n• <code>/anime 123456</code>\n• <code>/anime Naruto</code>\n\nVocê também pode utilizar o modo <i>inline</i> usando o prefixo <code>!a</code> ou o botão abaixo.",
     "anime_not_found": "Anime não encontrado.",
