@@ -21,7 +21,7 @@ use grammers_client::{
     InputMessage,
 };
 use maplit::hashmap;
-use rust_anilist::models::{Anime, RelationType};
+use rust_anilist::models::{Anime, Format, RelationType};
 
 use crate::{
     resources::{AniList, I18n},
@@ -146,7 +146,12 @@ async fn send_anime_info(anime: Anime, ctx: Context, i18n: &I18n) -> Result<()> 
         ));
     }
 
-    if anime.episodes.is_some() {
+    if matches!(anime.format, Format::Movie) {
+        buttons.push(button::inline(
+            t("watch_btn"),
+            format!("anime episodes {0} {1}", anime.id, sender.id()),
+        ));
+    } else if anime.episodes.is_some() {
         buttons.push(button::inline(
             t("episodes_btn"),
             format!("anime episodes {0} {1}", anime.id, sender.id()),
