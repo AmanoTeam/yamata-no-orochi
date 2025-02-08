@@ -88,14 +88,20 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
             if let Ok(manga) = ani.get_manga(id).await {
                 send_manga_info(manga, ctx, &i18n).await?;
             } else {
-                ctx.reply(InputMessage::html(t("manga_not_found"))).await?;
+                ctx.reply(InputMessage::html(t("not_found"))).await?;
             }
         } else {
             let title = args.join(" ");
 
             if let Some(result) = ani.search_manga(&title, 1, 6).await {
                 if result.is_empty() {
-                    ctx.reply(InputMessage::html(t("no_results"))).await?;
+                    ctx.reply(InputMessage::html(t("no_results_text")).reply_markup(
+                        &reply_markup::inline(vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!m {}", title),
+                        )]]),
+                    ))
+                    .await?;
                     return Ok(());
                 } else if result.len() == 1 {
                     let manga = ani.get_manga(result[0].id).await.unwrap_or_default();
@@ -119,7 +125,13 @@ async fn manga(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                 )
                 .await?;
             } else {
-                ctx.reply(InputMessage::html(t("no_results"))).await?;
+                ctx.reply(InputMessage::html(t("no_results_text")).reply_markup(
+                    &reply_markup::inline(vec![vec![button::switch_inline(
+                        t("search_again_btn"),
+                        format!("!m {}", title),
+                    )]]),
+                ))
+                .await?;
             }
         }
     }
@@ -428,15 +440,31 @@ async fn manga_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()
 
     if results.is_empty() {
         if offset == 1 {
-            results.push(inline::query::Article::new(
-                t("no_results"),
-                InputMessage::html(t("no_results")),
-            ));
+            results.push(
+                inline::query::Article::new(
+                    t("no_results"),
+                    InputMessage::html(t("no_results_text")).reply_markup(&reply_markup::inline(
+                        vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!m {}", arg),
+                        )]],
+                    )),
+                )
+                .description(t("click_for_more_info")),
+            );
         } else {
-            results.push(inline::query::Article::new(
-                t("no_more_results"),
-                InputMessage::html(t("no_more_results")),
-            ));
+            results.push(
+                inline::query::Article::new(
+                    t("no_more_results"),
+                    InputMessage::html(t("no_more_results_text")).reply_markup(
+                        &reply_markup::inline(vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!m {}", arg),
+                        )]]),
+                    ),
+                )
+                .description(t("click_for_more_info")),
+            );
         }
     }
 

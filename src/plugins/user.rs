@@ -58,14 +58,20 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
             if let Ok(user) = ani.get_user(id).await {
                 send_user_info(&user, ctx).await?;
             } else {
-                ctx.reply(InputMessage::html(t("user_not_found"))).await?;
+                ctx.reply(InputMessage::html(t("not_found"))).await?;
             }
         } else {
             let name = args.join(" ");
 
             if let Some(result) = ani.search_user(&name, 1, 6).await {
                 if result.is_empty() {
-                    ctx.reply(InputMessage::html(t("no_results"))).await?;
+                    ctx.reply(InputMessage::html(t("no_results_text")).reply_markup(
+                        &reply_markup::inline(vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!u {}", name),
+                        )]]),
+                    ))
+                    .await?;
                     return Ok(());
                 } else if result.len() == 1 {
                     return send_user_info(&result[0], ctx).await;
@@ -82,7 +88,13 @@ async fn user(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                 )
                 .await?;
             } else {
-                ctx.reply(InputMessage::html(t("no_results"))).await?;
+                ctx.reply(InputMessage::html(t("no_results_text")).reply_markup(
+                    &reply_markup::inline(vec![vec![button::switch_inline(
+                        t("search_again_btn"),
+                        format!("!u {}", name),
+                    )]]),
+                ))
+                .await?;
             }
         }
     }
@@ -132,15 +144,31 @@ async fn user_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Result<()>
 
     if results.is_empty() {
         if offset == 1 {
-            results.push(inline::query::Article::new(
-                t("no_results"),
-                InputMessage::html(t("no_results")),
-            ));
+            results.push(
+                inline::query::Article::new(
+                    t("no_results"),
+                    InputMessage::html(t("no_results_text")).reply_markup(&reply_markup::inline(
+                        vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!u {}", arg),
+                        )]],
+                    )),
+                )
+                .description(t("click_for_more_info")),
+            );
         } else {
-            results.push(inline::query::Article::new(
-                t("no_more_results"),
-                InputMessage::html(t("no_more_results")),
-            ));
+            results.push(
+                inline::query::Article::new(
+                    t("no_more_results"),
+                    InputMessage::html(t("no_more_results_text")).reply_markup(
+                        &reply_markup::inline(vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!u {}", arg),
+                        )]]),
+                    ),
+                )
+                .description(t("click_for_more_info")),
+            );
         }
     }
 

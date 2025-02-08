@@ -29,7 +29,8 @@ async fn inline(query: InlineQuery, i18n: I18n) -> Result<()> {
         .answer(vec![inline::query::Article::new(
             t("how_to_use_inline"),
             InputMessage::html(t("how_to_use_inline_text")),
-        )])
+        )
+        .description(t("click_for_more_info"))])
         .cache_time(60)
         .private()
         .send()

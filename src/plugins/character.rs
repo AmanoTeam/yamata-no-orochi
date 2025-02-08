@@ -70,7 +70,7 @@ async fn character(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
     if args.is_empty() {
         ctx.reply(
             InputMessage::html(t("character_usage")).reply_markup(&reply_markup::inline(vec![
-                vec![button::switch_inline(t("search_btn"), "!a ")],
+                vec![button::switch_inline(t("search_btn"), "!c ")],
             ])),
         )
         .await?;
@@ -79,15 +79,20 @@ async fn character(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
             if let Ok(char) = ani.get_char(id).await {
                 send_char_info(char, ctx, &i18n).await?;
             } else {
-                ctx.reply(InputMessage::html(t("character_not_found")))
-                    .await?;
+                ctx.reply(InputMessage::html(t("not_found"))).await?;
             }
         } else {
             let title = args.join(" ");
 
             if let Some(result) = ani.search_char(&title, 1, 6).await {
                 if result.is_empty() {
-                    ctx.reply(InputMessage::html(t("no_results"))).await?;
+                    ctx.reply(InputMessage::html(t("no_results_text")).reply_markup(
+                        &reply_markup::inline(vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!c {}", title),
+                        )]]),
+                    ))
+                    .await?;
                     return Ok(());
                 } else if result.len() == 1 {
                     return send_char_info(result[0].clone(), ctx, &i18n).await;
@@ -109,7 +114,13 @@ async fn character(ctx: Context, i18n: I18n, ani: AniList) -> Result<()> {
                 )
                 .await?;
             } else {
-                ctx.reply(InputMessage::html(t("no_results"))).await?;
+                ctx.reply(InputMessage::html(t("no_results_text")).reply_markup(
+                    &reply_markup::inline(vec![vec![button::switch_inline(
+                        t("search_again_btn"),
+                        format!("!c {}", title),
+                    )]]),
+                ))
+                .await?;
             }
         }
     }
@@ -184,15 +195,31 @@ async fn character_inline(query: InlineQuery, i18n: I18n, ani: AniList) -> Resul
 
     if results.is_empty() {
         if offset == 1 {
-            results.push(inline::query::Article::new(
-                t("no_results"),
-                InputMessage::html(t("no_results")),
-            ));
+            results.push(
+                inline::query::Article::new(
+                    t("no_results"),
+                    InputMessage::html(t("no_results_text")).reply_markup(&reply_markup::inline(
+                        vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!c {}", arg),
+                        )]],
+                    )),
+                )
+                .description(t("click_for_more_info")),
+            );
         } else {
-            results.push(inline::query::Article::new(
-                t("no_more_results"),
-                InputMessage::html(t("no_more_results")),
-            ));
+            results.push(
+                inline::query::Article::new(
+                    t("no_more_results"),
+                    InputMessage::html(t("no_more_results_text")).reply_markup(
+                        &reply_markup::inline(vec![vec![button::switch_inline(
+                            t("search_again_btn"),
+                            format!("!c {}", arg),
+                        )]]),
+                    ),
+                )
+                .description(t("click_for_more_info")),
+            );
         }
     }
 
