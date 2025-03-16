@@ -28,12 +28,14 @@ pub struct Config {
 impl Config {
     /// Load the configuration from the file.
     pub fn load() -> Result<Self> {
-        let mut file = std::fs::File::open(PATH)?;
+        let mut file = std::fs::File::open(PATH)
+            .expect(format!("Failed to open config file: {}", PATH).as_str());
 
         let mut content = String::new();
-        file.read_to_string(&mut content)?;
+        file.read_to_string(&mut content)
+            .expect("Failed to read config file");
 
-        Ok(toml::from_str::<Self>(&content)?)
+        Ok(toml::from_str::<Self>(&content).expect("Failed to parse config file"))
     }
 }
 

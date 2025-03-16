@@ -58,10 +58,9 @@ fn main() -> Result<()> {
                     Update::CallbackQuery(query) => {
                         query
                             .answer()
-                            .alert(format!(
-                                "Erro:\n{}\n\nReporte em @Yonorochi.",
-                                err
-                            ))
+                            .alert(
+                                "Ocorreu um erro enquanto processávamos sua solicitação. Reporte em @Yonorochi.",
+                            )
                             .send()
                             .await?;
                     }
