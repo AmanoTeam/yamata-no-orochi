@@ -36,6 +36,8 @@ pub fn escape_html(text: impl Into<String>) -> String {
         .replace(r"\", "&quot;")
         .replace("'", "&#x27;")
         .replace("/", "&#x2F;")
+        .trim()
+        .to_string()
 }
 
 /// Removes specific HTML tags from the given text.
@@ -74,6 +76,8 @@ pub fn remove_html(text: impl Into<String>) -> String {
         .replace("&quot;", "\"")
         .replace("&#x27;", "'")
         .replace("&#x2F;", "/")
+        .trim()
+        .to_string()
 }
 
 /// Shortens a given text to a specified maximum length, appending "..." if truncated.
