@@ -16,7 +16,7 @@ mod resources;
 pub mod utils;
 
 use ferogram::{Client, Injector, Result};
-use grammers_client::{types::inline, InputMessage, Update};
+use grammers_client::{InputMessage, Update, types::inline};
 use resources::{AniList, Database, I18n};
 
 fn main() -> Result<()> {
@@ -26,10 +26,12 @@ fn main() -> Result<()> {
 
         // Set the log level if it is not set.
         if std::env::var("RUST_LOG").is_err() {
-            std::env::set_var(
-                "RUST_LOG",
-                format!("yamata_no_orochi={}", config.app.log_level),
-            );
+            unsafe {
+                std::env::set_var(
+                    "RUST_LOG",
+                    format!("yamata_no_orochi={}", config.app.log_level),
+                );
+            }
         }
 
         // Initialize the logger.

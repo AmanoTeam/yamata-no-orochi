@@ -9,7 +9,7 @@ A Telegram bot that uses the AniList API to search for anime and manga.
 homepage = "https://github.com/AmanoTeam/yamata-no-orochi"
 repository = "https://github.com/AmanoTeam/yamata-no-orochi"
 keywords = ["telegram", "bot", "anilist", "anime", "manga"]
-edition = "2021"
+edition = "2024"
 
 [profile.release]
 lto = true
