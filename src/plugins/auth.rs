@@ -43,7 +43,7 @@ async fn auth(ctx: Context, db: Database, i18n: I18n, config: Config) -> Result<
                 .await?;
             } else {
                 ctx.reply(InputMessage::html(t("authenticate")).reply_markup(
-                    &reply_markup::inline(vec![vec![button::url(
+                    &reply_markup::inline(vec![vec![button::webview(
                         t("authenticate_btn"),
                         format!("https://anilist.co/api/v2/oauth/authorize?client_id={0}&response_type=code&redirect_uri=http://amanoteam.github.io/yamata-no-orochi", config.anilist.client_id),
                     )]]),
