@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --base-color: rgb(128 128 128);
+  --color-transparent: rgb(0 0 0 / 0);
+}
+
+.light-mode {
+  --filter-brightness: 1.5;
+  --base-color-primary: rgb(0 0 0);
+  --base-color-secondary: rgb(255 255 255);
+  --mix-blend-mode: multiply;
+}
+
+.dark-mode {
+  --filter-brightness: 0.5;
+  --base-color-primary: rgb(255 255 255);
+  --base-color-secondary: rgb(0 0 0);
+  --mix-blend-mode: screen;
+}
+
+body {
+  --color-primary: color-mix(
+    in srgb,
+    var(--base-color) 20%,
+    var(--base-color-primary)
+  );
+  --color-secondary: color-mix(
+    in srgb,
+    var(--base-color) 15%,
+    var(--base-color-secondary)
+  );
+
+  --bg-filter: color-mix(
+    in srgb,
+    var(--color-secondary) 40%,
+    var(--color-transparent)
+  );
+  --bg-progress: color-mix(
+    in srgb,
+    var(--color-primary) 30%,
+    var(--color-transparent)
+  );
+}
+
+.auto-mix-blend {
+  mix-blend-mode: var(--mix-blend-mode);
+}

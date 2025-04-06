@@ -1,0 +1,69 @@
+---
+import "@fontsource-variable/fira-code";
+
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<script>
+  import { initMiniApp } from "@telegram-apps/sdk";
+
+  const loc = window.location.href;
+  const url = new URL(loc);
+  const code = url.searchParams.get("code");
+
+  function initCode() {
+    if (code === null) {
+      window.location.href = "..";
+      return;
+    }
+
+    const codePre = document.querySelector("pre#code") as HTMLPreElement;
+
+    codePre.textContent = "/auth " + code;
+
+    const copyBtn = document.querySelector("a#copy-btn") as HTMLAnchorElement;
+
+    const copiedSpan = document.querySelector("span#copied") as HTMLSpanElement;
+
+    copyBtn.addEventListener("click", async () => {
+      if (!codePre.textContent) {
+        return;
+      }
+
+      await navigator.clipboard.writeText(codePre.textContent);
+
+      copiedSpan.textContent = "Copied to clipboard!";
+      setTimeout(() => {
+        copiedSpan.textContent = "";
+      }, 2000);
+    });
+
+    const [miniApp] = initMiniApp();
+    miniApp.sendData(code);
+  }
+
+  window.addEventListener("DOMContentLoaded", initCode);
+</script>
+
+<MainLayout>
+  <div
+    id="main"
+    class="flex h-screen max-w-4xl flex-col justify-center mx-auto p-4"
+  >
+    <h2 class="mx-auto text-2xl p-5 font-semibold">
+      Copy the code below and send it to your previous chat:
+    </h2>
+    <pre
+      id="code"
+      class="p-2 w-full rounded-lg bg-neutral-900 whitespace-pre-wrap break-words mx-auto">
+    </pre>
+    <br />
+    <div class="inline-block mt-5">
+      <a
+        class="cursor-pointer self-start bg-neutral-600 rounded-lg py-2 px-4 hover:bg-neutral-500 active:bg-neutral-700"
+        id="copy-btn">Copy</a
+      >
+      <span id="copied"></span>
+    </div>
+  </div>
+</MainLayout>
