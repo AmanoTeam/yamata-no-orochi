@@ -31,12 +31,15 @@
   "medias_btn": "🎬 Medias",
   "reload_btn": "🔄 Reload",
   "search_btn": "🔎 Search",
+  "profile_btn": "👤 Profile",
   "studios_btn": "🎬 Studios",
   "episodes_btn": "📺 Episodes",
   "chapters_btn": "📑 Chapters",
   "previous_btn": "⬅️ Previous",
   "load_more_btn": "➕ Load more",
   "characters_btn": "👥 Characters",
+  "disconnect_btn": "🔌 Disconnect",
+  "authenticate_btn": "🔑 Authenticate",
   "voice_actors_btn": "🎙 Voice actors",
   "search_again_btn": "🔍 Search again",
 
@@ -46,9 +49,14 @@
   "new_language": "The language has been set to: <b>${new_language}</b>.",
   "already_language": "The language is already set to: ${language}.",
 
+  "authenticate": "Authenticate your AniList account using the button below.",
+  "not_authenticated": "You <b>aren't</b> connected to your AniList account. Connect to use this function.",
+  "already_authenticated": "You <b>are</b> connected to your AniList account. Disconnect to connect to another account.",
+
   "not_allowed": "Not allowed.",
   "not_available": "Not available.",
   "not_implemented": "Not implemented.",
+  "only_user_command": "This command can only be used by users.",
 
   "not_found": "The <b>id</b> provided has no record in the AniList database.",
   "no_results": "No results found.",

@@ -11,6 +11,7 @@
 use ferogram::Router;
 
 mod anime;
+mod auth;
 mod character;
 mod inline;
 mod language;
@@ -30,4 +31,5 @@ pub fn setup(router: Router) -> Router {
         .extend(user::setup)
         .extend(character::setup)
         .extend(inline::setup)
+        .extend(auth::setup)
 }

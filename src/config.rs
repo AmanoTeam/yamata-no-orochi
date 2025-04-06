@@ -8,19 +8,21 @@
 
 //! The bot configuration.
 
-use std::io::Read;
+use std::io::{Read, Write};
 
-use ferogram::Result;
+use ferogram::{Result, utils::prompt};
 use serde::{Deserialize, Serialize};
 
 /// The path to the configuration file.
 const PATH: &str = "./assets/config.toml";
 
 /// The configuration.
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Config {
     /// Application-related settings.
     pub app: App,
+    /// Anilist-related settings.
+    pub anilist: Anilist,
     /// Telegram-related settings.
     pub telegram: Telegram,
 }
@@ -28,18 +30,61 @@ pub struct Config {
 impl Config {
     /// Load the configuration from the file.
     pub fn load() -> Result<Self> {
-        let mut file = std::fs::File::open(PATH)
-            .expect(format!("Failed to open config file: {}", PATH).as_str());
+        if let Ok(mut file) = std::fs::File::open(PATH) {
+            let mut content = String::new();
+            file.read_to_string(&mut content)
+                .expect("Failed to read config file");
 
-        let mut content = String::new();
-        file.read_to_string(&mut content)
-            .expect("Failed to read config file");
+            Ok(toml::from_str::<Self>(&content).expect("Failed to parse config file"))
+        } else {
+            let answer = prompt("Config file not found. Create a new one? (y/N) ", false)
+                .expect("Failed to read input");
 
-        Ok(toml::from_str::<Self>(&content).expect("Failed to parse config file"))
+            match answer.to_lowercase().trim() {
+                "y" | "yes" => {
+                    println!("Creating a new config file at {:?}", PATH);
+
+                    let mut file =
+                        std::fs::File::create(PATH).expect("Failed to create config file");
+
+                    let config = Self {
+                        app: App {
+                            log_level: "trace".to_string(),
+                            database_url: "postgres://username:password@host:port/database"
+                                .to_string(),
+                            session_file: "./assets/bot.session".to_string(),
+                        },
+                        anilist: Anilist {
+                            client_id: 12345,
+                            client_secret: "YOUR_CLIENT_SECRET_HERE".to_string(),
+                        },
+                        telegram: Telegram {
+                            api_id: 1234567,
+                            api_hash: "YOUR_API_HASH_HERE".to_string(),
+                            bot_token: "YOUR_BOT_TOKEN_HERE".to_string(),
+                            catch_up: false,
+                            flood_sleep_threshold: 180,
+                        },
+                    };
+                    let content = toml::to_string_pretty(&config).expect("Failed to serialize");
+                    file.write_all(content.as_bytes())
+                        .expect("Failed to write config file");
+
+                    println!("Config file created. Please edit it and run the bot again.");
+
+                    std::process::exit(0);
+                }
+                _ => {
+                    eprintln!("Aborting.");
+                    std::process::exit(1);
+                }
+            }
+        }
     }
 }
 
-#[derive(Deserialize, Serialize)]
+/// Application-related settings.
+#[derive(Clone, Deserialize, Serialize)]
 pub struct App {
     /// The log level.
     pub log_level: String,
@@ -49,8 +94,17 @@ pub struct App {
     pub session_file: String,
 }
 
+/// Anilist-related settings.
+#[derive(Clone, Deserialize, Serialize)]
+pub struct Anilist {
+    /// The Anilist client ID.
+    pub client_id: i32,
+    /// The Anilist client secret.
+    pub client_secret: String,
+}
+
 /// Telegram-related settings.
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Telegram {
     /// The Telegram API ID.
     pub api_id: i32,

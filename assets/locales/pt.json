@@ -31,12 +31,15 @@
   "medias_btn": "🎬 Mídias",
   "reload_btn": "🔄 Recarregar",
   "search_btn": "🔎 Pesquisar",
+  "profile_btn": "👤 Perfil",
   "studios_btn": "🎬 Estúdios",
   "episodes_btn": "📺 Episódios",
   "chapters_btn": "📑 Capítulos",
   "previous_btn": "⬅️ Anterior",
   "load_more_btn": "➕ Carregar mais",
   "characters_btn": "👥 Personagens",
+  "disconnect_btn": "🔌 Desconectar",
+  "authenticate_btn": "🔑 Conectar",
   "voice_actors_btn": "🎙 Dubladores",
   "search_again_btn": "🔍 Pesquisar novamente",
 
@@ -46,9 +49,14 @@
   "new_language": "O idioma foi definido para: <b>${new_language}</b>.",
   "already_language": "O idioma já está definido para: ${language}.",
 
+  "authenticate": "Conecte sua conta do AniList utilizando o botão abaixo.",
+  "not_authenticated": "Você <b>não</b> se conectou à sua conta do AniList. Conecte-se para utilizar esta função.",
+  "already_authenticated": "Você <b>já</b> se conectou à sua conta do AniList. Desconecte-se para conectar uma nova conta.",
+
   "not_allowed": "Não autorizado.",
   "not_available": "Não disponível.",
   "not_implemented": "Não implementado.",
+  "only_user_command": "Este comando só pode ser utilizado por <b>usuários</b>.",
 
   "not_found": "O <b>id</b> informado não tem registro na base de dados do AniList.",
   "no_results": "Nenhum resultado encontrado.",

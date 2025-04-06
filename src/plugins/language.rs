@@ -9,15 +9,14 @@
 //! Language plugin.
 
 use ferogram::{
-    filter, handler,
+    Context, Filter, Result, Router, filter, handler,
     utils::{bytes_to_string, split_btns_into_columns},
-    Context, Filter, Result, Router,
 };
-use grammers_client::{button, reply_markup, types::Chat, InputMessage};
+use grammers_client::{InputMessage, button, reply_markup, types::Chat};
 use maplit::hashmap;
 
 use crate::{
-    models::{group::UpdateGroup, Group, UpdateUser, User},
+    models::{Group, UpdateUser, User, group::UpdateGroup},
     resources::{Database, I18n},
 };
 

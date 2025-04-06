@@ -11,8 +11,8 @@
 use std::{sync::Arc, time::Duration};
 
 use rust_anilist::{
-    models::{Anime, Character, Manga, User},
     Client, Error,
+    models::{Anime, Character, Manga, User},
 };
 
 use crate::resources::Cache;
