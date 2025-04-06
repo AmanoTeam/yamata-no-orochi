@@ -29,6 +29,7 @@ async fn start(message: Message, i18n: I18n) -> Result<()> {
         .split_whitespace()
         .skip(1)
         .collect::<String>();
+    println!("Arg: {}", arg);
 
     if arg.is_empty() {
         message.reply(InputMessage::html(t("start"))).await?;
