@@ -5,7 +5,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 ---
 
 <script>
-  import { initMiniApp } from "@telegram-apps/sdk";
+  import { sendData } from '@telegram-apps/sdk';
 
   const loc = window.location.href;
   const url = new URL(loc);
@@ -38,8 +38,10 @@ import MainLayout from "../layouts/MainLayout.astro";
       }, 2000);
     });
 
-    const [miniApp] = initMiniApp();
-    miniApp.sendData(code);
+
+    if (sendData.isAvailable()) {
+      sendData(code);
+    }
   }
 
   window.addEventListener("DOMContentLoaded", initCode);
