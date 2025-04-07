@@ -24,21 +24,7 @@ pub fn setup(router: Router) -> Router {
 async fn start(message: Message, i18n: I18n) -> Result<()> {
     let t = |key: &str| i18n.translate(key);
 
-    let arg = message
-        .text()
-        .split_whitespace()
-        .skip(1)
-        .collect::<String>();
-    println!("Arg: {}", arg);
-
-    if arg.is_empty() {
-        message.reply(InputMessage::html(t("start"))).await?;
-    } else {
-        if arg.starts_with("auth") {
-            let code = arg.split_once('_').expect("Failed to split code").1;
-            println!("Code: {}", code);
-        }
-    }
+    message.reply(InputMessage::html(t("start"))).await?;
 
     Ok(())
 }

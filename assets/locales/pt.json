@@ -51,7 +51,9 @@
 
   "authenticate": "Conecte sua conta do AniList utilizando o botão abaixo.",
   "not_authenticated": "Você <b>não</b> se conectou à sua conta do AniList. Conecte-se para utilizar esta função.",
+  "authentication_failed": "A conexão com a sua conta do AniList falhou. Tente novamente.\n\n<b>Erro</b>: <code>${error}</code>.",
   "already_authenticated": "Você <b>já</b> se conectou à sua conta do AniList. Desconecte-se para conectar uma nova conta.",
+  "authentication_success": "A conexão com a sua conta do AniList foi estabelecida com sucesso!",
 
   "not_allowed": "Não autorizado.",
   "not_available": "Não disponível.",

@@ -51,7 +51,9 @@
 
   "authenticate": "Authenticate your AniList account using the button below.",
   "not_authenticated": "You <b>aren't</b> connected to your AniList account. Connect to use this function.",
+  "authentication_failed": "The connection to your AniList account failed. Try again.\n\n<b>Error</b>: <code>${error}</code>.",
   "already_authenticated": "You <b>are</b> connected to your AniList account. Disconnect to connect to another account.",
+  "authentication_success": "The connection to your AniList account was successfully established!",
 
   "not_allowed": "Not allowed.",
   "not_available": "Not available.",

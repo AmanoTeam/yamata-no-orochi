@@ -33,19 +33,19 @@ impl Config {
         if let Ok(mut file) = std::fs::File::open(PATH) {
             let mut content = String::new();
             file.read_to_string(&mut content)
-                .expect("Failed to read config file");
+                .expect("failed to read config file");
 
-            Ok(toml::from_str::<Self>(&content).expect("Failed to parse config file"))
+            Ok(toml::from_str::<Self>(&content).expect("failed to parse config file"))
         } else {
             let answer = prompt("Config file not found. Create a new one? (y/N) ", false)
-                .expect("Failed to read input");
+                .expect("failed to read input");
 
             match answer.to_lowercase().trim() {
                 "y" | "yes" => {
                     println!("Creating a new config file at {:?}", PATH);
 
                     let mut file =
-                        std::fs::File::create(PATH).expect("Failed to create config file");
+                        std::fs::File::create(PATH).expect("failed to create config file");
 
                     let config = Self {
                         app: App {
@@ -66,9 +66,9 @@ impl Config {
                             flood_sleep_threshold: 180,
                         },
                     };
-                    let content = toml::to_string_pretty(&config).expect("Failed to serialize");
+                    let content = toml::to_string_pretty(&config).expect("failed to serialize");
                     file.write_all(content.as_bytes())
-                        .expect("Failed to write config file");
+                        .expect("failed to write config file");
 
                     println!("Config file created. Please edit it and run the bot again.");
 
