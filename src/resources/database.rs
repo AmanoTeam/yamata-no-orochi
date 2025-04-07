@@ -11,7 +11,7 @@
 use std::path::Path;
 
 use ferogram::Result;
-use sqlx::{migrate::Migrator, PgPool};
+use sqlx::{PgPool, migrate::Migrator};
 
 /// Where the migrations are located.
 const MIGRATIONS_PATH: &str = "./assets/migrations/";

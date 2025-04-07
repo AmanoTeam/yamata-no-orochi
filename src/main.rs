@@ -15,14 +15,21 @@ mod plugins;
 mod resources;
 pub mod utils;
 
+pub use config::Config;
 use ferogram::{Client, Injector, Result};
 use grammers_client::{InputMessage, Update, types::inline};
 use resources::{AniList, Database, I18n};
 
 fn main() -> Result<()> {
     tokio_uring::start(async {
+        // Initialize the injector.
+        let mut injector = Injector::default();
+
         // Load the configuration.
-        let config = config::Config::load()?;
+        let config = Config::load()?;
+
+        // Register the config resource.
+        injector.insert(config.clone());
 
         // Set the log level if it is not set.
         if std::env::var("RUST_LOG").is_err() {
@@ -90,9 +97,6 @@ fn main() -> Result<()> {
             .await?;
 
         log::info!("telegram server connected");
-
-        // Initialize the injector.
-        let mut injector = Injector::default();
 
         // Initialize and register the i18n resource.
         let mut i18n = I18n::with_locale("pt");
