@@ -1,0 +1,127 @@
+# Copyright 2025 - Andriel Ferreira
+#
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# https://www.apache.org/licenses/LICENSE-2.0> or the MIT license
+# <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your
+# option. This file may not be copied, modified, or distributed
+# except according to those terms.
+
+on: [push]
+
+name: Build
+
+jobs:
+  native-build:
+    name: Native build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Check for cache
+        id: check-cache
+        uses: actions/cache@main
+        with:
+          key: yamata-no-orochi
+          lookup-only: true
+          path: |
+            /tmp/yamata-no-orochi-x86_64-linux-gnu
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Build Yamata no Orochi
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - name: Move binary
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        run: |
+          mv target/release/yamata-no-orochi /tmp/yamata-no-orochi-x86_64-linux-gnu
+
+      - name: Upload artifact
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        uses: actions/upload-artifact@main
+        with:
+          name: native-toolchain
+          if-no-files-found: error
+          path: |
+            /tmp/yamata-no-orochi-x86_64-linux-gnu
+
+      - name: Cache artifact
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache@main
+        with:
+          key: yamata-no-orochi
+          path: |
+            /tmp/yamata-no-orochi-x86_64-linux-gnu
+
+  cross-build:
+    name: Cross build
+    needs: native-build
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        target: [
+          'x86_64-unknown-linux-gnu',
+          'arm-unknown-linux-gnueabi',
+          'aarch64-unknown-linux-gnu',
+        ]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Check for cache
+        id: check-cache
+        uses: actions/cache@main
+        with:
+          key: yamata-no-orochi
+          lookup-only: true
+          path: |
+            /tmp/yamata-no-orochi-${{ matrix.target }}
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Build Yamata no Orochi
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --release --target ${{ matrix.target }}
+
+      - name: Move binary
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        run: |
+          mv target/${{ matrix.target }}/yamata-no-orochi /tmp/yamata-no-orochi-${{ matrix.target }}
+
+      - name: Upload artifact
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        uses: actions/upload-artifact@main
+        with:
+          name: native-toolchain
+          if-no-files-found: error
+          path: |
+            /tmp/yamata-no-orochi-${{ matrix.target }}
+
+      - name: Cache artifact
+        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache@main
+        with:
+          key: yamata-no-orochi
+          path: |
+            /tmp/yamata-no-orochi-${{ matrix.target }}
