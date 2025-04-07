@@ -32,7 +32,6 @@ jobs:
           args: --release
 
       - name: Move binary
-        if: ${{ steps.check-cache.outputs.cache-hit != 'true' }}
         run: |
           mv target/release/yamata-no-orochi /tmp/yamata-no-orochi-x86_64-linux-gnu
 
@@ -64,7 +63,7 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          target: ${{ matrix.target }}-musl
+          target: ${{ matrix.target }}
           override: true
 
       - name: Build Yamata no Orochi
@@ -72,7 +71,7 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --release --target ${{ matrix.target }}-musl
+          args: --release --target ${{ matrix.target }}
 
       - name: Move binary
         run: |
