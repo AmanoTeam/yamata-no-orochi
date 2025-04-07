@@ -8,10 +8,10 @@
 
 //! The start plugin.
 
-use ferogram::{filter, handler, Result, Router};
+use ferogram::{Result, Router, filter, handler};
 use grammers_client::{
-    types::{inline, InlineQuery},
     InputMessage,
+    types::{InlineQuery, inline},
 };
 
 use crate::resources::I18n;
@@ -26,11 +26,13 @@ async fn inline(query: InlineQuery, i18n: I18n) -> Result<()> {
     let t = |key: &str| i18n.translate(key);
 
     query
-        .answer(vec![inline::query::Article::new(
-            t("how_to_use_inline"),
-            InputMessage::html(t("how_to_use_inline_text")),
-        )
-        .description(t("click_for_more_info"))])
+        .answer(vec![
+            inline::query::Article::new(
+                t("how_to_use_inline"),
+                InputMessage::html(t("how_to_use_inline_text")),
+            )
+            .description(t("click_for_more_info")),
+        ])
         .cache_time(60)
         .private()
         .send()

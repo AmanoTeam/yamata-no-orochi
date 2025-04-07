@@ -10,8 +10,8 @@
 
 use std::time::Instant;
 
-use ferogram::{filter, handler, Result, Router};
-use grammers_client::{grammers_tl_types as tl, types::Message, Client, InputMessage};
+use ferogram::{Result, Router, filter, handler};
+use grammers_client::{Client, InputMessage, grammers_tl_types as tl, types::Message};
 
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
