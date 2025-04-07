@@ -8,11 +8,10 @@
 
 //! The user plugin.
 
-use ferogram::{filter, handler, Context, Result, Router};
+use ferogram::{Context, Result, Router, filter, handler};
 use grammers_client::{
-    button, reply_markup,
-    types::{inline, InlineQuery},
-    InputMessage,
+    InputMessage, button, reply_markup,
+    types::{InlineQuery, inline},
 };
 use maplit::hashmap;
 use rust_anilist::models::User;

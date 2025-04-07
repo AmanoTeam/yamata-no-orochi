@@ -146,8 +146,6 @@ async fn auth(message: Message, db: Database, i18n: I18n, config: Config) -> Res
     Ok(())
 }
 
-pub fn authenticate_anilist_account() {}
-
 /// The body of the request to the AniList API.
 #[derive(Serialize)]
 struct Body {

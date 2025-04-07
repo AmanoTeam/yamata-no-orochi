@@ -10,11 +10,10 @@
 
 use std::time::Duration;
 
-use ferogram::{filter, handler, utils::split_btns_into_columns, Context, Result, Router};
+use ferogram::{Context, Result, Router, filter, handler, utils::split_btns_into_columns};
 use grammers_client::{
-    button, reply_markup,
-    types::{inline, InlineQuery},
-    InputMessage,
+    InputMessage, button, reply_markup,
+    types::{InlineQuery, inline},
 };
 use maplit::hashmap;
 use rust_anilist::models::Character;

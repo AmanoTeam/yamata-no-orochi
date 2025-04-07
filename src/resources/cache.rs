@@ -13,7 +13,7 @@ use std::{collections::HashMap, hash::Hash, sync::Arc};
 use tokio::sync::RwLock;
 
 /// Cache module.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Cache<K, V> {
     /// The underlying map storing the cached values.
     map: Arc<RwLock<HashMap<K, V>>>,
