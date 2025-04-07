@@ -8,13 +8,17 @@
 
 //! Middlewares.
 
+mod authenticate_anilist;
 mod update_chat_lang;
 
+use authenticate_anilist::AuthenticateAniList;
 use update_chat_lang::UpdateChatLang;
 
 use ferogram::MiddlewareStack;
 
 /// The middlewares setup.
 pub fn setup(stack: MiddlewareStack) -> MiddlewareStack {
-    stack.before(UpdateChatLang)
+    stack
+        .before(UpdateChatLang)
+        .before(AuthenticateAniList::new())
 }

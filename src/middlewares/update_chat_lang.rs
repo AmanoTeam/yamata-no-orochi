@@ -10,8 +10,8 @@
 
 use async_trait::async_trait;
 use ferogram::{
-    flow::{self, Flow},
     Context, Injector, Middleware,
+    flow::{self, Flow},
 };
 use grammers_client::{Client, Update};
 

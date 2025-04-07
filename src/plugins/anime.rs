@@ -11,14 +11,12 @@
 use std::time::Duration;
 
 use ferogram::{
-    filter, handler,
+    Context, Result, Router, filter, handler,
     utils::{bytes_to_string, split_btns_into_columns},
-    Context, Result, Router,
 };
 use grammers_client::{
-    button, reply_markup,
-    types::{inline, CallbackQuery, InlineQuery},
-    InputMessage,
+    InputMessage, button, reply_markup,
+    types::{CallbackQuery, InlineQuery, inline},
 };
 use maplit::hashmap;
 use rust_anilist::models::{Anime, Format, RelationType};

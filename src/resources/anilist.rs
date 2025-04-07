@@ -18,10 +18,10 @@ use rust_anilist::{
 use crate::resources::Cache;
 
 /// AniList module.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AniList {
     /// The AniList client.
-    client: Arc<rust_anilist::Client>,
+    pub client: Arc<rust_anilist::Client>,
     /// The cache for anime.
     cache_anime: Cache<i64, Anime>,
     /// The cache for manga.
