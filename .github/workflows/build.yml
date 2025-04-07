@@ -64,7 +64,7 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          target: ${{ matrix.target }}
+          target: ${{ matrix.target }}-musl
           override: true
 
       - name: Build Yamata no Orochi
@@ -72,7 +72,7 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --release --target ${{ matrix.target }}
+          args: --release --target ${{ matrix.target }}-musl
 
       - name: Move binary
         run: |
