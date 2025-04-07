@@ -65,7 +65,6 @@ jobs:
 
   cross-build:
     name: Cross build
-    needs: native-build
     runs-on: ubuntu-latest
     continue-on-error: true
     strategy:
