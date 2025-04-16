@@ -46,23 +46,27 @@ impl Middleware for AuthenticateAniList {
         let ctx = injector.get::<Context>().unwrap();
 
         let pool = db.pool();
-        let sender = ctx.sender().expect("no sender found");
-
-        if let Ok(Some(user)) = User::get_by_id(pool, &sender.id()).await {
-            if let Some(client) = self.clients.get(&user.id) {
-                ani.client = client.clone();
-            } else {
-                log::debug!("creating a new Anilist client for user {:?}", user.id);
-
-                let client = Arc::new(if let Some(token) = user.anilist_token {
-                    rust_anilist::Client::with_token(&token).timeout(Duration::from_secs(15))
+        if let Some(sender) = ctx.sender() {
+            if let Ok(Some(user)) = User::get_by_id(pool, &sender.id()).await {
+                if let Some(client) = self.clients.get(&user.id) {
+                    ani.client = client.clone();
                 } else {
-                    rust_anilist::Client::with_timeout(Duration::from_secs(15))
-                });
+                    log::debug!("creating a new Anilist client for user {:?}", user.id);
 
-                self.clients.insert(user.id, Arc::clone(&client)).await;
-                ani.client = client;
+                    let client = Arc::new(if let Some(token) = user.anilist_token {
+                        rust_anilist::Client::with_token(&token).timeout(Duration::from_secs(15))
+                    } else {
+                        rust_anilist::Client::with_timeout(Duration::from_secs(15))
+                    });
+
+                    self.clients.insert(user.id, Arc::clone(&client)).await;
+                    ani.client = client;
+                }
             }
+        } else {
+            log::debug!("creating a new Anilist client for anonymous user");
+
+            ani.client = Arc::new(rust_anilist::Client::with_timeout(Duration::from_secs(15)));
         }
 
         injector.insert(ani);
