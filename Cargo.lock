@@ -4509,6 +4509,7 @@ dependencies = [
  "grammers-client",
  "log",
  "maplit",
+ "openssl",
  "rand 0.9.0",
  "rust-anilist",
  "serde",

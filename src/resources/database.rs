@@ -12,6 +12,7 @@ use std::path::Path;
 
 use ferogram::Result;
 use sqlx::{PgPool, migrate::Migrator};
+use tokio::fs::read_dir;
 
 /// Where the migrations are located.
 const MIGRATIONS_PATH: &str = "./assets/migrations/";
@@ -54,6 +55,34 @@ impl Database {
     ///
     /// Returns an error if the migration fails.
     pub async fn migrate(&self) -> Result<()> {
+        log::debug!("searching migrations from: {:?}", MIGRATIONS_PATH);
+
+        let mut dir = read_dir(MIGRATIONS_PATH)
+            .await
+            .expect("failed to read migrations directory");
+        let mut files = Vec::new();
+
+        while let Some(child) = dir.next_entry().await? {
+            files.push(child);
+        }
+
+        if files.is_empty() {
+            log::warn!("no migrations found");
+            return Ok(());
+        } else {
+            log::debug!(
+                "found migrations: {}",
+                files
+                    .into_iter()
+                    .map(|entry| entry
+                        .file_name()
+                        .into_string()
+                        .expect("failed to parse file name"))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            );
+        }
+
         log::debug!("migrating the database...");
 
         let migrator = Migrator::new(Path::new(MIGRATIONS_PATH)).await?;
