@@ -11,14 +11,15 @@
 mod config;
 mod middlewares;
 pub mod models;
-mod plugins;
+pub mod plugins;
 mod resources;
 pub mod utils;
 
 pub use config::Config;
 use ferogram::{Client, Injector, Result};
 use grammers_client::{InputMessage, Update, types::inline};
-use resources::{AniList, Database, I18n};
+use models::Mirror;
+use resources::{AniList, Database, I18n, MirrorManager};
 
 fn main() -> Result<()> {
     tokio_uring::start(async {
@@ -36,7 +37,10 @@ fn main() -> Result<()> {
             unsafe {
                 std::env::set_var(
                     "RUST_LOG",
-                    format!("yamata_no_orochi={}", config.app.log_level),
+                    format!(
+                        "yamata_no_orochi={},ferogram=debug,grammers_client=info",
+                        config.app.log_level
+                    ),
                 );
             }
         }
@@ -98,7 +102,7 @@ fn main() -> Result<()> {
 
         log::info!("telegram server connected");
 
-        // Initialize and register the i18n resource.
+        // Initialize and register the I18n resource.
         let mut i18n = I18n::with_locale("pt");
         i18n.load()?;
         injector.insert(i18n);
@@ -107,9 +111,16 @@ fn main() -> Result<()> {
         let anilist = AniList::new();
         injector.insert(anilist);
 
-        // Initialize and register the database resource.
+        // Initialize the database resource.
         let database = Database::connect(&config.app.database_url).await;
         database.migrate().await?;
+
+        // Initialize and register the Mirror Manager resource.
+        let mirrors = Mirror::list_all(database.pool()).await?;
+        let mirror_manager = MirrorManager::new(mirrors);
+        injector.insert(mirror_manager);
+
+        // Register the database resource.
         injector.insert(database);
 
         // Register the handlers and run the client.

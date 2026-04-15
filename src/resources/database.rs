@@ -15,7 +15,7 @@ use sqlx::{PgPool, migrate::Migrator};
 use tokio::fs::read_dir;
 
 /// Where the migrations are located.
-const MIGRATIONS_PATH: &str = "./assets/migrations/";
+const MIGRATIONS_PATH: &str = "./migrations/";
 
 /// Database module.
 #[derive(Clone)]

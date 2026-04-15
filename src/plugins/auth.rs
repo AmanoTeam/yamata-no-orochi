@@ -11,7 +11,7 @@
 use base64::Engine;
 use ferogram::{Result, Router, filter, handler};
 use grammers_client::{
-    InputMessage, Update, button, reply_markup,
+    InputMessage, button, reply_markup,
     types::{Chat, Message},
 };
 use maplit::hashmap;
@@ -25,22 +25,14 @@ use crate::{
 
 /// The plugin setup.
 pub fn setup(router: Router) -> Router {
-    router
-        .register(
-            handler::new_message(filter::command("auth").description("Authenticate with AniList."))
-                .then(auth),
-        )
-        .register(
-            handler::new_update(filter::always).then(|update: Update| async move {
-                println!("{:?}", update);
-
-                Ok(())
-            }),
-        )
+    router.register(
+        handler::new_message(filter::command("auth").description("Authenticate with AniList."))
+            .then(auth),
+    )
 }
 
 /// The auth handler.
-async fn auth(message: Message, db: Database, i18n: I18n, config: Config) -> Result<()> {
+pub async fn auth(message: Message, db: Database, i18n: I18n, config: Config) -> Result<()> {
     let t = |key: &str| i18n.translate(key);
     let t_a = |key: &str, args| i18n.translate_with_args(key, args);
     let pool = db.pool();
@@ -50,15 +42,21 @@ async fn auth(message: Message, db: Database, i18n: I18n, config: Config) -> Res
         .split_whitespace()
         .skip(1)
         .collect::<Vec<_>>();
+    let chat = message.chat();
     let sender = message.sender();
 
     if let Some(Chat::User(u)) = sender {
+        if chat.id() != u.id() {
+            message.reply(InputMessage::html(t("only_private"))).await?;
+            return Ok(());
+        }
+
         if let Some(user) = User::get_by_id(pool, &u.id()).await? {
             if user.anilist_token.is_some() {
                 message
                     .reply(InputMessage::html(t("already_authenticated")).reply_markup(
                         &reply_markup::inline(vec![vec![
-                            button::inline(t("disconnect_btn"), "auth revoke"),
+                            button::inline(t("revoke_btn"), "auth revoke"),
                             button::inline(
                                 t("profile_btn"),
                                 format!("user {}", user.anilist_id.unwrap_or(0)),

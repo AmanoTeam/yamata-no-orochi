@@ -28,8 +28,10 @@
   "links_btn": "🖇 Links",
   "staff_btn": "👨‍👩‍👧‍👦 Staff",
   "watch_btn": "📽 Assistir",
+  "create_btn": "➕ Criar",
   "medias_btn": "🎬 Mídias",
   "reload_btn": "🔄 Recarregar",
+  "revoke_btn": "🔌 Desconectar",
   "search_btn": "🔎 Pesquisar",
   "profile_btn": "👤 Perfil",
   "studios_btn": "🎬 Estúdios",
@@ -38,7 +40,6 @@
   "previous_btn": "⬅️ Anterior",
   "load_more_btn": "➕ Carregar mais",
   "characters_btn": "👥 Personagens",
-  "disconnect_btn": "🔌 Desconectar",
   "authenticate_btn": "🔑 Conectar",
   "voice_actors_btn": "🎙 Dubladores",
   "search_again_btn": "🔍 Pesquisar novamente",
@@ -56,9 +57,19 @@
   "authentication_success": "A conexão com a sua conta do AniList foi estabelecida com sucesso!",
 
   "not_allowed": "Não autorizado.",
+  "only_private": "Este comando só pode ser utilizado no chat privado.",
   "not_available": "Não disponível.",
   "not_implemented": "Não implementado.",
   "only_user_command": "Este comando só pode ser utilizado por <b>usuários</b>.",
+
+  "mirrors_owned": "Atualmente você possui <code>${count}</code> mirrors.",
+  "send_mirror_token": "Envie o <b>bot token</b> fornecido pelo @BotFather do seu mirror.",
+  "mirror_token_validated": "O token do mirror <code>${id}</code> foi validado com sucesso! Ele será ativo em instantes.",
+  "validating_mirror_token": "Validando o token <code>${token}</code>, será finalizado em instantes...",
+  "failed_to_create_mirror": "Ocorreu um erro ao tentar criar o seu mirror. Tente novamente.",
+  "failed_to_validate_mirror_token": "<b>Não</b> foi possível validar o token enviado. Tente novamente.",
+
+  "times_up": "O tempo de espera terminou, execute a ação novamente.",
 
   "not_found": "O <b>id</b> informado não tem registro na base de dados do AniList.",
   "no_results": "Nenhum resultado encontrado.",

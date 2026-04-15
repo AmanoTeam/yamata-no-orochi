@@ -6,8 +6,5 @@ indent_style = space
 end_of_line = lf
 insert_final_newline = true
 
-[*.json]
-indent_size = 2
-
-[*.md]
+[*.{json,md,sql}]
 indent_size = 2

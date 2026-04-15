@@ -9,7 +9,9 @@
 //! Database models.
 
 pub mod group;
+pub mod mirror;
 pub mod user;
 
 pub use group::{Group, NewGroup, UpdateGroup};
+pub use mirror::{Mirror, NewMirror};
 pub use user::{NewUser, UpdateUser, User};

@@ -11,11 +11,12 @@
 use ferogram::Router;
 
 mod anime;
-mod auth;
+pub mod auth;
 mod character;
 mod inline;
 mod language;
 mod manga;
+mod mirror;
 mod ping;
 mod start;
 mod user;
@@ -32,4 +33,5 @@ pub fn setup(router: Router) -> Router {
         .extend(character::setup)
         .extend(inline::setup)
         .extend(auth::setup)
+        .extend(mirror::setup)
 }
